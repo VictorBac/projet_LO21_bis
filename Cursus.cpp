@@ -5,6 +5,7 @@
 #include <QtXml>
 #include <QMessageBox>
 #include "Cursus.h"
+#include <stdlib>
 
 void Cursus::retirerUV(unsigned int x){
     for(unsigned int j=x; j<nbUv-1;j++){
