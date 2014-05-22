@@ -4,16 +4,6 @@
 #include"UTProfiler.h"
 #include"UVEditeur.h"
 
-<<<<<<< HEAD
-//coucou
-=======
-
-<<<<<<< HEAD
-//Test de modification 1
-
->>>>>>> origin/Branche3
-=======
->>>>>>> origin/Branche3
 class Cursus {
 protected :
     QString title;
