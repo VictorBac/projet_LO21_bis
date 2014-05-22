@@ -6,6 +6,8 @@
 
 //test modification
 
+//Modif Victor
+
 class Cursus {
 protected :
     QString title;
