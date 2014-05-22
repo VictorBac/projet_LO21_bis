@@ -4,7 +4,6 @@
 #include"UTProfiler.h"
 #include"UVEditeur.h"
 
-//test modification
 
 class Cursus {
 protected :
