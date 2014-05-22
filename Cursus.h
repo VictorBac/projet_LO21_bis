@@ -7,6 +7,8 @@
 
 //Modif Victor
 
+//Totooooooooooooooo
+//azrfqsdaz
 class Cursus {
 protected :
     QString title;
