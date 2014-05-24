@@ -4,6 +4,8 @@
 #include "CursusEditeur.h"
 #include "CursusCreateur.h"
 #include "Cursus.h"
+#include "Dossier.h"
+#include "DossierEditeur.h"
 #include "UVCreateur.h"
 #include <QMenuBar>
 #include <QFileDialog>
@@ -21,27 +23,46 @@ Profiler::Profiler(QWidget *parent):QMainWindow(parent){
 
     QAction *actionChargerUV=mCharger->addAction("Catalogue UVs");
     QAction *actionChargerCursus=mCharger->addAction("Catalogue Cursus");
+    QAction *actionChargerDossier=mCharger->addAction("Catalogue Dossiers");
     mFichier->addSeparator();
 
     QAction *actionQuitter = mFichier->addAction("&Quitter");
     QAction* actionUV=mEdition->addAction("&UV");
     QAction* actionCursus=mEdition->addAction("&Cursus");
+    QAction* actionDossier=mEdition->addAction("&Dossier");
     QAction* actionUV2=mAjout->addAction("&UV");
     QAction* actionCursus2=mAjout->addAction("&Cursus");
+    QAction* actionDossier2=mAjout->addAction("&Dossier");
     QAction* actionUV3=mSuppr->addAction("&UV");
     QAction* actionCursus3=mSuppr->addAction("&Cursus");
+    QAction* actionDossier3=mSuppr->addAction("&Dossier");
 
     // connections
     connect(actionChargerUV, SIGNAL(triggered()),this,SLOT(openChargerUV()));
     connect(actionChargerCursus, SIGNAL(triggered()),this,SLOT(openChargerCursus()));
+    connect(actionChargerDossier, SIGNAL(triggered()),this,SLOT(openChargerDossier()));
     connect(actionQuitter, SIGNAL(triggered()), qApp, SLOT(quit()));
     connect(actionUV, SIGNAL(triggered()),this,SLOT(openUV()));
     connect(actionCursus, SIGNAL(triggered()),this,SLOT(openCursus()));
+    connect(actionDossier, SIGNAL(triggered()),this,SLOT(openDossier()));
     connect(actionUV2, SIGNAL(triggered()),this, SLOT(nouvelleUV()));
     connect(actionCursus2, SIGNAL(triggered()),this,SLOT(NouveauCursus()));
+    connect(actionDossier2, SIGNAL(triggered()),this, SLOT(nouveauDossier()));
     connect(actionUV3, SIGNAL(triggered()),this, SLOT(SupprUV()));
     connect(actionCursus3, SIGNAL(triggered()),this,SLOT(SupprCursus()));
+    connect(actionDossier3, SIGNAL(triggered()),this,SLOT(SupprDossier()));
 }
+
+void Profiler::openChargerDossier(){
+    QString chemin = QFileDialog::getOpenFileName();
+    try {
+        if (chemin!="")DossierManager::getInstance().load(chemin);
+        QMessageBox::information(this, "Chargement Dossier", "Le catalogue de dossier a été chargé.");
+    }catch(UTProfilerException& e){
+        QMessageBox::warning(this, "Chargement Dossier", "Erreur lors du chargement du fichier (non valide ?)");
+    }
+}
+
 
 void Profiler::openChargerUV(){
     QString chemin = QFileDialog::getOpenFileName();
@@ -131,5 +152,16 @@ void Profiler::SupprCursus(){
     }
 }
 
+void Profiler::openDossier(){
+    QString id=QInputDialog::getText(this,"Entrez l'id du dossier à éditer","Dossier");
+    if (id!="")
+    try {
+        Dossier& dossier=DossierManager::getInstance().getDossier(id);
+        DossierEditeur* fenetre=new DossierEditeur(dossier,this);
+        setCentralWidget(fenetre);
+    }catch(UTProfilerException& e){
+        QMessageBox::warning(this, "Edition Dossier", QString("Erreur : le dossier ")+id+" n’existe pas.");
+    }
+}
 
 

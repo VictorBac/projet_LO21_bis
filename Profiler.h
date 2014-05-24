@@ -23,6 +23,8 @@ public slots:
     void NouveauCursus();
     void SupprUV();
     void SupprCursus();
+    void openChargerDossier();
+    void openDossier();
 };
 
 #endif // PROFILER_H

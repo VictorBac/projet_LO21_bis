@@ -193,8 +193,8 @@ public:
 	void setResultat(Note newres) { resultat=newres; }
 };
 
-class Dossier {
-};
+/*class Dossier {
+};*/
 
 class Formation{
 };
