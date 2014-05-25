@@ -36,7 +36,9 @@ QString CategorieToString(Categorie c);
 QTextStream& operator>>(QTextStream& f, Categorie& cat);
 
 enum Note { A, B, C, D, E, F, FX, RES, ABS, /* en cours */ EC  };
+
 enum Saison { Automne, Printemps };
+
 inline QTextStream& operator<<(QTextStream& f, const Saison& s) { if (s==Automne) f<<"A"; else f<<"P"; return f;}
 
 class Semestre {
@@ -57,12 +59,15 @@ class UV {
 	Categorie categorie;
     bool automne;
     bool printemps;
-	UV(const UV& u);
+    //UV(const UV& u);
 	UV& operator=(const UV& u);
     UV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p):
       code(c),titre(t),nbCredits(nbc),categorie(cat),automne(a),printemps(p){}
 	friend class UVManager;
 public:
+    // Public ?
+    UV(const UV& u);
+    ////
     QString getCode() const { return code; }
     QString getTitre() const { return titre; }
 	unsigned int getNbCredits() const { return nbCredits; }
@@ -180,7 +185,7 @@ public:
 	}
 };
 
-
+/*
 class Inscription {
 	const UV* uv;
 	Semestre semestre;
@@ -192,9 +197,9 @@ public:
 	Note getResultat() const { return resultat; }
 	void setResultat(Note newres) { resultat=newres; }
 };
-
-class Dossier {
-};
+*/
+/*class Dossier {
+};*/
 
 class Formation{
 };

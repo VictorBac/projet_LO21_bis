@@ -55,6 +55,7 @@ QTextStream& operator<<(QTextStream& f, const Categorie& cat){
 
 UVManager::UVManager():uvs(0),nbUV(0),nbMaxUV(0),file(""),modification(false){
 }
+
 UV& UVManager::creatUV(){
     try{
         UV* newuv = new UV(" "," ",1,CS,false, false);
