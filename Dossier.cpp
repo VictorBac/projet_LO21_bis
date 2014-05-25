@@ -4,20 +4,26 @@
 #include <QTextcodec>
 #include <QtXml>
 #include <QMessageBox>
+#include <QString>
 
+void Dossier::retirerInscription(unsigned int x){
+    for(unsigned int j=x; j<nbInscr-1;j++){
+        inscr[j]=inscr[j+1];}
+    nbInscr--;
+}
 
 DossierManager::DossierManager():dossiers(0),nbDossier(0),nbMaxDossier(0),file(""),modification(false){
 }
 
 Dossier& DossierManager::creatDossier(){
     try{
-        Dossier* newDossier = new Dossier(" "," "," ", " ");
+        Dossier* newDossier = new Dossier(QString(nbDossier+1)," "," ", " ");
         addItem(newDossier);
         modification = true;
         return *newDossier;
     }
     catch(UTProfilerException& e){
-        throw UTProfilerException("erreur", __FILE__,__LINE__);
+        QMessageBox::warning(NULL, "Chargement Dossier","Heeeer");
     }
 };
 
@@ -32,6 +38,7 @@ int DossierManager::existDossier(const QString& id) const{
 }
 
 void DossierManager::load(const QString& f){
+
     if (file!=f) this->~DossierManager();
     file=f;
 
@@ -101,6 +108,7 @@ void DossierManager::load(const QString& f){
     }
     // Removes any device() or data from the reader * and resets its internal state to the initial state.
     xml.clear();
+
 }
 
 
@@ -134,6 +142,7 @@ DossierManager::~DossierManager(){
     for(unsigned int i=0; i<nbDossier; i++) delete dossiers[i];
     delete[] dossiers;
 }
+
 
 void DossierManager::addItem(Dossier* dossier){
     if (nbDossier==nbMaxDossier){

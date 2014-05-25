@@ -6,6 +6,7 @@
 #include "Cursus.h"
 #include "Dossier.h"
 #include "DossierEditeur.h"
+#include "DossierCreateur.h"
 #include "UVCreateur.h"
 #include <QMenuBar>
 #include <QFileDialog>
@@ -31,9 +32,11 @@ Profiler::Profiler(QWidget *parent):QMainWindow(parent){
     QAction* actionCursus=mEdition->addAction("&Cursus");
     QAction* actionDossier=mEdition->addAction("&Dossier");
     QAction* actionUV2=mAjout->addAction("&UV");
+
     QAction* actionCursus2=mAjout->addAction("&Cursus");
     QAction* actionDossier2=mAjout->addAction("&Dossier");
     QAction* actionUV3=mSuppr->addAction("&UV");
+
     QAction* actionCursus3=mSuppr->addAction("&Cursus");
     QAction* actionDossier3=mSuppr->addAction("&Dossier");
 
@@ -109,7 +112,6 @@ void Profiler::openUV(){
 }
 
 void Profiler::nouvelleUV(){
-    QString code="";
     try {
         UV& uv=UVManager::getInstance().creatUV();
         UVCreateur* fenetre=new UVCreateur(uv,this);
@@ -120,13 +122,22 @@ void Profiler::nouvelleUV(){
 }
 
 void Profiler::NouveauCursus(){
-    QString code="";
     try {
         Cursus& cur=CursusManager::getInstance().creatCursus();
         CursusCreateur* fenetre=new CursusCreateur(cur,this);
         setCentralWidget(fenetre);
     }catch(UTProfilerException& e){
         QMessageBox::warning(this, "Ajout UV", QString("Impossible de créer une UV"));
+    }
+}
+
+void Profiler::nouveauDossier(){
+    try {
+        Dossier& dos=DossierManager::getInstance().creatDossier();
+        DossierCreateur* fenetre=new DossierCreateur(dos,this);
+        setCentralWidget(fenetre);
+    }catch(UTProfilerException& e){
+        QMessageBox::warning(this, "Creation Dossier", QString("Impossible de créer un Dossier"));
     }
 }
 

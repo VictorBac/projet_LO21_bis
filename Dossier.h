@@ -3,6 +3,17 @@
 #include "UTProfiler.h"
 #include <QString>
 
+class Inscription {
+    const QString codeUV;
+    Semestre semestre;
+    Note resultat;
+public:
+    Inscription(const QString code, const Semestre& s, Note res=EC):codeUV(code),semestre(s),resultat(res){}
+    const QString& getUV() const { return codeUV; }
+    Semestre getSemestre() const { return semestre; }
+    Note getResultat() const { return resultat; }
+    void setResultat(Note newres) { resultat=newres; }
+};
 
 class Dossier {
 
@@ -11,12 +22,20 @@ protected:
     QString nom;
     QString prenom;
     QString cursus;
+    Inscription** inscr;
+    unsigned int nbInscr;
+    unsigned int nbMaxInscr;
     Dossier& operator=(const Dossier& d);
-    Dossier(const QString& i, const QString& n, const QString& p, const QString& c):
-      id(i),nom(n),prenom(p),cursus(c){}
+    Dossier(const QString& i, const QString& n, const QString& p, const QString& c, unsigned int nbIns=0,unsigned int nbIns2=0):
+        id(i),nom(n),prenom(p),cursus(c),nbInscr(nbIns),nbMaxInscr(nbIns2),inscr(0){}
     friend class DossierManager;
 
 public:
+    unsigned int getNbInscription(){return nbInscr;}
+    Inscription* getInscription(unsigned int i){
+        return inscr[i];
+    }
+
     QString getId() const { return id; }
     QString getNom() const {return nom;}
     QString getPrenom() const {return prenom;}
@@ -25,6 +44,20 @@ public:
     void setNom(const QString& n) { nom=n; }
     void setPrenom(const QString& p) { prenom=p; }
     void setCursus(const QString& c) { cursus=c; }
+
+    void retirerInscription(unsigned int x);
+    void AjouterInscription(Inscription* I){
+        if(nbMaxInscr==nbInscr){
+            Inscription** tab2 = new Inscription*[nbMaxInscr+10];
+            for(unsigned int i=0; i<nbInscr; i++)
+                tab2[i]=inscr[i];
+            Inscription** temp=inscr;
+            inscr=tab2;
+            delete[] temp;
+            nbMaxInscr+=10;
+            }
+        inscr[nbInscr++]=I;
+    }
 
 };
 

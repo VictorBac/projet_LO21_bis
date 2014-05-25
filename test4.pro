@@ -11,7 +11,8 @@ SOURCES += \
     UVCreateur.cpp \
     CursusCreateur.cpp \
     Dossier.cpp \
-    DossierEditeur.cpp
+    DossierEditeur.cpp \
+    DossierCreateur.cpp
 
 HEADERS += \
     UTProfiler.h \
@@ -22,4 +23,5 @@ HEADERS += \
     UVCreateur.h \
     CursusCreateur.h \
     Dossier.h \
-    DossierEditeur.h
+    DossierEditeur.h \
+    DossierCreateur.h
