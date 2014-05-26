@@ -4,15 +4,17 @@
 #include <QString>
 
 class Inscription {
-    const QString codeUV;
+    QString codeUV;
     Semestre semestre;
     Note resultat;
 public:
-    Inscription(const QString code, const Semestre& s, Note res=EC):codeUV(code),semestre(s),resultat(res){}
+    Inscription(const QString code="", const Semestre& s=Semestre(Printemps,2010), Note res=EC):codeUV(code),semestre(s),resultat(res){}
     const QString& getUV() const { return codeUV; }
     Semestre getSemestre() const { return semestre; }
     Note getResultat() const { return resultat; }
     void setResultat(Note newres) { resultat=newres; }
+    void setSemestre(Semestre s){ semestre=s;}
+    void setCode(const QString c){ codeUV=c;}
 };
 
 class Dossier {
@@ -27,7 +29,9 @@ protected:
     unsigned int nbMaxInscr;
     Dossier& operator=(const Dossier& d);
     Dossier(const QString& i, const QString& n, const QString& p, const QString& c, unsigned int nbIns=0,unsigned int nbIns2=0):
-        id(i),nom(n),prenom(p),cursus(c),nbInscr(nbIns),nbMaxInscr(nbIns2),inscr(0){}
+        id(i),nom(n),prenom(p),cursus(c),nbInscr(0),nbMaxInscr(nbIns2),inscr(0){}
+    Dossier():id(" "),nom(""),prenom(" "),cursus(" "),nbInscr(0),nbMaxInscr(0),inscr(0){}
+
     friend class DossierManager;
 
 public:
@@ -93,6 +97,9 @@ public:
     static DossierManager& getInstance();
     static void libererInstance();
     void ajouterDossier(const QString& i, const QString& n, const QString& p, const QString& curs);
+    //*SI on ajoute un dossier directement :
+    //void ajouterDossier(Dossier &dos);
+
     const Dossier& getDossier(const QString& id) const;
     Dossier& getDossier(const QString& id);
     class Iterator {

@@ -5,6 +5,7 @@
 #include <QTextStream>
 #include <vector>
 #include <map>
+
 using namespace std;
 
 class UTProfilerException{
@@ -30,6 +31,7 @@ enum Categorie {
     /* Technologies et Sciences de l'Homme */ TSH, /* Stage et Projet */ SP
 };
 
+
 QTextStream& operator<<(QTextStream& f, const Categorie& s);
 Categorie StringToCategorie(const QString& s);
 QString CategorieToString(Categorie c);
@@ -51,6 +53,17 @@ public:
 };
 
 inline QTextStream& operator<<(QTextStream& f, const Semestre& s) { return f<<s.getSaison()<<s.getAnnee()%100; }
+
+//************************
+// transformation de string en objet et inversement.
+Note StringToNote(const QString& s);
+QString NoteToString(Note c);
+
+Saison StringToSaison(const QString& s);
+QString SaisonToString(Saison c);
+
+//***********************
+
 
 class UV {
     QString code;
