@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dossiers>
+    <dossier>
+        <id>test2</id>
+        <nom>Nom</nom>
+        <prenom>Prenom</prenom>
+        <cursus>TC</cursus>
+    </dossier>
+    <dossier>
+        <id>6</id>
+        <nom>Nom</nom>
+        <prenom>Prenom</prenom>
+        <cursus>TC</cursus>
+    </dossier>
+    <dossier>
+        <id>2</id>
+        <nom>Nom</nom>
+        <prenom>Prenom</prenom>
+        <cursus>TC</cursus>
+    </dossier>
+</dossiers>
