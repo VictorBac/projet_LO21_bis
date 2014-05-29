@@ -66,11 +66,9 @@ public:
 };
 
 
-class DossierManager {
+class DossierManager :  public Manager<Dossier>{
 
 private:
-    Dossier** dossiers;
-    unsigned int nbDossier;
     unsigned int nbMaxDossier;
     void addItem(Dossier* dossier);
     bool modification;
@@ -99,46 +97,8 @@ public:
     void ajouterDossier(const QString& i, const QString& n, const QString& p, const QString& curs);
     //*SI on ajoute un dossier directement :
     //void ajouterDossier(Dossier &dos);
-
     const Dossier& getDossier(const QString& id) const;
     Dossier& getDossier(const QString& id);
-    class Iterator {
-        friend class DossierManager;
-        Dossier** currentDossier;
-        unsigned int nbRemain;
-        Iterator(Dossier** d, unsigned nb):currentDossier(d),nbRemain(nb){}
-    public:
-        Iterator():nbRemain(0),currentDossier(0){}
-        bool isDone() const { return nbRemain==0; }
-        void next() {
-            if (isDone())
-                throw UTProfilerException("error, next on an iterator which is done");
-            nbRemain--;
-            currentDossier++;
-        }
-        Dossier& current() const {
-            if (isDone())
-                throw UTProfilerException("error, indirection on an iterator which is done");
-            return **currentDossier;
-        }
-    };
-    Iterator getIterator() {
-        return Iterator(dossiers,nbDossier);
-    }
-
-    class iterator {
-        Dossier** current;
-        iterator(Dossier** d):current(d){}
-        friend class DossierManager;
-    public:
-        iterator():current(0){};
-        Dossier& operator*() const { return **current; }
-        bool operator!=(iterator it) const { return current!=it.current; }
-        iterator& operator++(){ ++current; return *this; }
-    };
-    iterator begin() { return iterator(dossiers); }
-    iterator end() { return iterator(dossiers+nbDossier); }
-
 };
 
 

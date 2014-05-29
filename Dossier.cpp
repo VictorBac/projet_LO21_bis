@@ -13,12 +13,12 @@ void Dossier::retirerInscription(unsigned int x){
     nbInscr--;
 }
 
-DossierManager::DossierManager():dossiers(0),nbDossier(0),nbMaxDossier(0),file(""),modification(false){
+DossierManager::DossierManager():Manager(),nbMaxDossier(0),modification(false){
 }
 
 Dossier& DossierManager::creatDossier(){
     try{
-        Dossier* newDossier = new Dossier(QString(nbDossier+1)," "," ", " ");
+        Dossier* newDossier = new Dossier(QString(this->Nb+1)," "," ", " ");
         addItem(newDossier);
         modification = true;
         return *newDossier;
@@ -55,7 +55,7 @@ int DossierManager::existDossier(const QString& id) const{
 //    {
 //        if (reader.isStartElement())
 //        {
-//            if (reader.name() == "dossiers")
+//            if (reader.name() == "this->tab")
 //            {
 
 //                reader.readNext(); // On va au prochain token
@@ -166,7 +166,7 @@ void DossierManager::load(const QString& f){
         // If token is StartElement, we'll see if we can read it.
         if(token == QXmlStreamReader::StartElement) {
             // If it's named uvs, we'll go to the next.
-            if(xml.name() == "dossiers") continue;
+            if(xml.name() == "this->tab") continue;
             // If it's named uv, we'll dig the information from there.
             if(xml.name() == "dossier") {
 
@@ -261,25 +261,25 @@ void DossierManager::save(const QString& f){
      QXmlStreamWriter stream(&newfile);
      stream.setAutoFormatting(true);
      stream.writeStartDocument();
-     stream.writeStartElement("dossiers");
-         for(unsigned int i=0; i<nbDossier; i++){
+     stream.writeStartElement("this->tab");
+         for(unsigned int i=0; i<this->Nb; i++){
              stream.writeStartElement("dossier");
-                stream.writeTextElement("id",dossiers[i]->getId());
-                stream.writeTextElement("nom",dossiers[i]->getNom());
-                stream.writeTextElement("prenom",dossiers[i]->getPrenom());
-                stream.writeTextElement("cursus",dossiers[i]->getCursus());
+                stream.writeTextElement("id",this->tab[i]->getId());
+                stream.writeTextElement("nom",this->tab[i]->getNom());
+                stream.writeTextElement("prenom",this->tab[i]->getPrenom());
+                stream.writeTextElement("cursus",this->tab[i]->getCursus());
 
-                for(unsigned int j=0; j<dossiers[i]->getNbInscription(); j++){
+                for(unsigned int j=0; j<this->tab[i]->getNbInscription(); j++){
                 stream.writeStartElement("ins");
-                    stream.writeTextElement("code",dossiers[i]->getInscription(j)->getUV());
-                    stream.writeTextElement("res",NoteToString(dossiers[i]->getInscription(j)->getResultat()));
-                    stream.writeTextElement("sais",SaisonToString(dossiers[i]->getInscription(j)->getSemestre().getSaison()));
-                    stream.writeTextElement("annee",QString::number(dossiers[i]->getInscription(j)->getSemestre().getAnnee()));
+                    stream.writeTextElement("code",this->tab[i]->getInscription(j)->getUV());
+                    stream.writeTextElement("res",NoteToString(this->tab[i]->getInscription(j)->getResultat()));
+                    stream.writeTextElement("sais",SaisonToString(this->tab[i]->getInscription(j)->getSemestre().getSaison()));
+                    stream.writeTextElement("annee",QString::number(this->tab[i]->getInscription(j)->getSemestre().getAnnee()));
                 stream.writeEndElement();
                 }
               stream.writeEndElement(); // fin de inscription
            }
-     stream.writeEndElement(); // fin de dossiers
+     stream.writeEndElement(); // fin de this->tab
      stream.writeEndDocument(); // fin du doc
 
      newfile.close();
@@ -288,21 +288,21 @@ void DossierManager::save(const QString& f){
 
 DossierManager::~DossierManager(){
     if (file!="") save(file);
-    for(unsigned int i=0; i<nbDossier; i++) delete dossiers[i];
-    delete[] dossiers;
+    for(unsigned int i=0; i<this->Nb; i++) delete this->tab[i];
+    delete[] this->tab;
 }
 
 
 void DossierManager::addItem(Dossier* dossier){
-    if (nbDossier==nbMaxDossier){
+    if (this->Nb==nbMaxDossier){
         Dossier** newtab = new Dossier*[nbMaxDossier+10];
-        for(unsigned int i=0; i<nbDossier; i++) newtab[i]=dossiers[i];
+        for(unsigned int i=0; i<this->Nb; i++) newtab[i]=this->tab[i];
         nbMaxDossier+=10;
-        Dossier** old=dossiers;
-        dossiers=newtab;
+        Dossier** old=this->tab;
+        this->tab=newtab;
         delete[] old;
     }
-    dossiers[nbDossier++]=dossier;
+    this->tab[this->Nb++]=dossier;
 }
 
 void DossierManager::ajouterDossier(const QString& i, const QString& n, const QString& p, const QString& c){
@@ -326,10 +326,10 @@ void DossierManager::ajouterDossier(Dossier& dos){
 
 Dossier* DossierManager::trouverDossier(const QString& c)const{
     //QMessageBox::warning(NULL, "Chargement Dossier","Coucou");
-    for(unsigned int i=0; i<nbDossier; i++){
+    for(unsigned int i=0; i<this->Nb; i++){
        // StandartButton
       //  QMessageBox::warning(NULL, "Chargement Dossier","Heeeer");
-       if (c==dossiers[i]->getId()) return dossiers[i];
+       if (c==this->tab[i]->getId()) return this->tab[i];
     }
     return 0;
 }
