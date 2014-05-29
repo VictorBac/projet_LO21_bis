@@ -23,6 +23,7 @@ class DossierEditeur : public QWidget{
     Q_OBJECT
 
     Dossier& dossier;
+    QComboBox * List; // Pour les inscriptions
 
     QLineEdit* id;
     QLabel* idLabel;
@@ -33,6 +34,8 @@ class DossierEditeur : public QWidget{
 
     QLineEdit* cursus;
     QLabel* cursusLabel;
+
+    QLabel* inscriptionLabel;
 
     /*QTextEdit* titre;
     QLabel* titreLabel;
@@ -51,6 +54,7 @@ class DossierEditeur : public QWidget{
     QHBoxLayout* coucheH3;
     QHBoxLayout* coucheH4;
     QHBoxLayout* coucheH5;
+    QHBoxLayout* coucheH6;
 
 public:
     explicit DossierEditeur(Dossier& dossierToEdit, QWidget *parent = 0);

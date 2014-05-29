@@ -26,6 +26,57 @@ QTextStream& operator>>(QTextStream& f, Categorie& cat){
 	return f;
 }
 
+//******************************
+//Transformation en objet/string
+Note StringToNote(const QString& str){
+
+    if(str=="A") return A;
+    if(str=="B") return B;
+    if(str=="C") return C;
+    if(str=="D") return D;
+    if(str=="E") return E;
+    if(str=="F") return F;
+    if(str=="FX") return B;
+    if(str=="EC") return EC;
+    if(str=="RES") return RES;
+    if(str=="ABS") return ABS;
+
+    throw UTProfilerException(QString("erreur, StringToNote, Note ")+str+" inexistante");
+}
+
+QString NoteToString(Note n){
+    switch(n){
+    case A: return "A";
+    case B: return "B";
+    case C: return "C";
+    case D: return "D";
+    case E: return "E";
+    case F: return "F";
+    case FX: return "FC";
+    case RES: return "RES";
+    case ABS: return "ABS";
+    case EC: return "EC";
+
+    default: throw UTProfilerException("erreur, NOTE non traitee",__FILE__,__LINE__);
+        }
+}
+
+Saison StringToSaison(const QString& s){
+    if(s=="Printemps") return Printemps;
+    else
+    if(s=="Automne") return Automne;
+    else throw UTProfilerException(QString("erreur, StringToSaison, saison ")+s+" inexistante");
+};
+
+QString SaisonToString(Saison s){
+    if(s == Printemps) return "Printemps";
+    else
+    if(s == Automne) return "Automne";
+    else {
+        throw UTProfilerException(QString("erreur, StringToSaison, saison ")+s+" inexistante");
+    }
+}
+
 Categorie StringToCategorie(const QString& str){
     if (str=="CS") return CS;
     else

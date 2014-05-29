@@ -24,6 +24,9 @@ DossierEditeur::DossierEditeur(Dossier& DossierToEdit, QWidget *parent) :
     this->setWindowTitle(QString("Edition du Dossier ")+dossier.getId());
 
     // creation des labels
+    //************
+    inscriptionLabel = new QLabel("Inscription",this);
+
     idLabel = new QLabel("id",this);
     nomLabel = new QLabel("Nom",this);
     prenomLabel = new QLabel("Prenom",this);
@@ -34,6 +37,8 @@ DossierEditeur::DossierEditeur(Dossier& DossierToEdit, QWidget *parent) :
     nom = new QLineEdit(dossier.getNom(),this);
     prenom = new QLineEdit(dossier.getPrenom(),this);
     cursus = new QLineEdit(dossier.getCursus(),this);
+    //**************
+    List = new QComboBox(this);
 
 
 
@@ -43,6 +48,15 @@ DossierEditeur::DossierEditeur(Dossier& DossierToEdit, QWidget *parent) :
 
     annuler= new QPushButton("Annuler", this);
     QObject::connect(annuler,SIGNAL(clicked()),this,SLOT(close()));
+
+    // Ajout de la liste des inscriptions.
+    for(unsigned int i=0;i<dossier.getNbInscription();i++){
+        try{
+        List->addItem(dossier.getInscription(i)->getUV());
+        }catch(UTProfilerException& e){
+            throw UTProfilerException("erreur inscription ", __FILE__,__LINE__);
+        }
+    }
 
     // connections******************************
     QObject::connect(id,SIGNAL(textEdited(QString)),this,SLOT(activerSauver(QString)));
@@ -70,6 +84,10 @@ DossierEditeur::DossierEditeur(Dossier& DossierToEdit, QWidget *parent) :
     coucheH4->addWidget(cursusLabel);
     coucheH4->addWidget(cursus);
 
+    coucheH6 = new QHBoxLayout;
+    coucheH6->addWidget(inscriptionLabel);
+    coucheH6->addWidget(List);
+
     coucheH5 = new QHBoxLayout;
     coucheH5->addWidget(annuler);
     coucheH5->addWidget(sauver);
@@ -78,6 +96,7 @@ DossierEditeur::DossierEditeur(Dossier& DossierToEdit, QWidget *parent) :
     couche->addLayout(coucheH2);
     couche->addLayout(coucheH3);
     couche->addLayout(coucheH4);
+    couche->addLayout(coucheH6);
     couche->addLayout(coucheH5);
     setLayout(couche);
 };

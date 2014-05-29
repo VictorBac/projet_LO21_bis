@@ -5,6 +5,7 @@
 #include <QtXml>
 #include <QMessageBox>
 #include <QString>
+#include "UTProfiler.h"
 
 void Dossier::retirerInscription(unsigned int x){
     for(unsigned int j=x; j<nbInscr-1;j++){
@@ -37,8 +38,115 @@ int DossierManager::existDossier(const QString& id) const{
     }
 }
 
-void DossierManager::load(const QString& f){
+//void DossierManager::load(const QString& f){
+//    if (file!=f) this->~DossierManager();
+//    file=f;
 
+//    QFile fin(file);
+//    // If we can't open it, let's show an error message.
+//    if (!fin.open(QIODevice::ReadOnly | QIODevice::Text)) {
+//        throw UTProfilerException("Erreur ouverture fichier Dossier");
+//    }
+//    // QXmlStreamReader takes any QIODevice.
+//    QXmlStreamReader reader(&fin);
+//    reader.readNext();
+
+//    while (!reader.atEnd())
+//    {
+//        if (reader.isStartElement())
+//        {
+//            if (reader.name() == "dossiers")
+//            {
+
+//                reader.readNext(); // On va au prochain token
+//                // Tant que celui-ci n'est pas un élément de départ on avance au token suivant
+//                while(reader.isStartElement()==false)
+//                    reader.readNext();
+
+//                if(reader.name() == "dossier")
+//                {
+//                    Dossier* dos = new Dossier;
+////                                        dos->setId("test");
+////                                        dos->setNom("test");
+////                                        dos->setPrenom("test");
+////                                        dos->setCursus("test");
+
+
+//                    reader.readNext();
+
+
+//                    while(!(reader.tokenType() == QXmlStreamReader::EndElement && reader.name() == "dossier")) {
+//                        if(reader.tokenType() == QXmlStreamReader::StartElement) {
+
+//                            if(reader.name() == "id") {
+//                                reader.readNext(); dos->setId(reader.text().toString());
+//                            }
+//                            // We've found nom.
+//                            if(reader.name() == "nom") {
+//                                reader.readNext(); dos->setNom(reader.text().toString());
+//                            }
+//                            // We've found prenom.
+//                            if(reader.name() == "prenom") {
+//                                reader.readNext(); dos->setPrenom(reader.text().toString());
+//                            }
+//                            if(reader.name() == "cursus") {
+//                               reader.readNext(); dos->setCursus(reader.text().toString());
+//                            }
+//                        }
+//                        reader.readNext();
+//                    }
+//                    addItem(dos);
+
+//                }//fin du dossier
+//            }else{
+//                /**********************************************/
+//                if(reader.name() == "dossier")
+//                {
+//                    Dossier* dos = new Dossier;
+////                                        dos->setId("test");
+////                                        dos->setNom("test");
+////                                        dos->setPrenom("test");
+////                                        dos->setCursus("test");
+
+
+//                    reader.readNext();
+
+
+//                    while(!(reader.tokenType() == QXmlStreamReader::EndElement && reader.name() == "dossier")) {
+//                        if(reader.tokenType() == QXmlStreamReader::StartElement) {
+
+//                            if(reader.name() == "id") {
+//                                reader.readNext(); dos->setId(reader.text().toString());
+//                            }
+//                            // We've found nom.
+//                            if(reader.name() == "nom") {
+//                                reader.readNext(); dos->setNom(reader.text().toString());
+//                            }
+//                            // We've found prenom.
+//                            if(reader.name() == "prenom") {
+//                                reader.readNext(); dos->setPrenom(reader.text().toString());
+//                            }
+//                            if(reader.name() == "cursus") {
+//                               reader.readNext(); dos->setCursus(reader.text().toString());
+//                            }
+//                        }
+//                        reader.readNext();
+//                    }
+//                    addItem(dos);
+
+//                }//fin du dossier
+//                /*******************************************************/
+//            }
+//        }
+//        reader.readNext(); // On va au prochain token
+//    }
+//    reader.clear();
+//}
+
+
+
+
+void DossierManager::load(const QString& f){
     if (file!=f) this->~DossierManager();
     file=f;
 
@@ -57,43 +165,75 @@ void DossierManager::load(const QString& f){
         if(token == QXmlStreamReader::StartDocument) continue;
         // If token is StartElement, we'll see if we can read it.
         if(token == QXmlStreamReader::StartElement) {
-            // If it's named dossiers, we'll go to the next.
+            // If it's named uvs, we'll go to the next.
             if(xml.name() == "dossiers") continue;
-            // If it's named Dossier, we'll dig the information from there.
+            // If it's named uv, we'll dig the information from there.
             if(xml.name() == "dossier") {
-                QString id;
-                QString nom;
-                QString prenom;
-                QString cursus;
+
+                Dossier* dos = new Dossier;
+//                    dos->setId("test");
+//                    dos->setNom("test");
+//                    dos->setPrenom("test");
+//                    dos->setCursus("test");
 
                 xml.readNext();
                 //We're going to loop over the things because the order might change.
-                //We'll continue the loop until we hit an EndElement named Dossier.
+                //We'll continue the loop until we hit an EndElement named uv.
 
 
                 while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "dossier")) {
                     if(xml.tokenType() == QXmlStreamReader::StartElement) {
                         // We've found id.
                         if(xml.name() == "id") {
-                            xml.readNext(); id=xml.text().toString();
+                            xml.readNext(); dos->setId(xml.text().toString());
                         }
                         // We've found nom.
                         if(xml.name() == "nom") {
-                            xml.readNext(); nom=xml.text().toString();
+                            xml.readNext(); dos->setNom(xml.text().toString());
                         }
                         // We've found prenom.
                         if(xml.name() == "prenom") {
-                            xml.readNext(); prenom=xml.text().toString();
+                            xml.readNext(); dos->setPrenom(xml.text().toString());
                         }
                         if(xml.name() == "cursus") {
-                            xml.readNext(); cursus=xml.text().toString();
+                           xml.readNext(); dos->setCursus(xml.text().toString());
                         }
+                        if(xml.name() == "ins") {
+                            //QMessageBox::information(NULL, "Sauvegarde", "Inscription rencontrée");
+                            Inscription* insc = new Inscription();
+                            Semestre s(Printemps, 2013);
+                            insc->setSemestre(s);
+                            insc->setResultat(A);
+                            insc->setCode("Heyyyyyy");
 
+                            xml.readNext();
+
+                            while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "ins")) {
+                                if(xml.tokenType() == QXmlStreamReader::StartElement) {
+                                    if(xml.name() == "code") {
+                                      xml.readNext();insc->setCode(xml.text().toString());
+                                    }
+                                    if(xml.name() == "res") {
+                                        xml.readNext();insc->setResultat(StringToNote(xml.text().toString()));
+                                    }
+                                    if(xml.name() == "sais") {
+                                      xml.readNext();s.setSaison(StringToSaison(xml.text().toString()));
+                                    }
+                                    if(xml.name() == "annee") {
+                                      xml.readNext();s.setAnnee(xml.text().toInt());
+                                    }
+
+                                }
+                                xml.readNext();
+                            }
+                            insc->setSemestre(s);
+                            dos->AjouterInscription(insc);
+                        }
                     }
                     // ...and next...
                     xml.readNext();
                 }
-                ajouterDossier(id,nom,prenom,cursus);
+                addItem(dos);
 
 
             }
@@ -104,12 +244,12 @@ void DossierManager::load(const QString& f){
 
     // Error handling.
     if(xml.hasError()) {
-        throw UTProfilerException("Erreur lecteur fichier Dossier, parser xml");
+        throw UTProfilerException("Erreur lecteur fichier UV, parser xml");
     }
     // Removes any device() or data from the reader * and resets its internal state to the initial state.
     xml.clear();
-
 }
+
 
 
 
@@ -128,10 +268,19 @@ void DossierManager::save(const QString& f){
                 stream.writeTextElement("nom",dossiers[i]->getNom());
                 stream.writeTextElement("prenom",dossiers[i]->getPrenom());
                 stream.writeTextElement("cursus",dossiers[i]->getCursus());
-             stream.writeEndElement();
-         }
-     stream.writeEndElement();
-     stream.writeEndDocument();
+
+                for(unsigned int j=0; j<dossiers[i]->getNbInscription(); j++){
+                stream.writeStartElement("ins");
+                    stream.writeTextElement("code",dossiers[i]->getInscription(j)->getUV());
+                    stream.writeTextElement("res",NoteToString(dossiers[i]->getInscription(j)->getResultat()));
+                    stream.writeTextElement("sais",SaisonToString(dossiers[i]->getInscription(j)->getSemestre().getSaison()));
+                    stream.writeTextElement("annee",QString::number(dossiers[i]->getInscription(j)->getSemestre().getAnnee()));
+                stream.writeEndElement();
+                }
+              stream.writeEndElement(); // fin de inscription
+           }
+     stream.writeEndElement(); // fin de dossiers
+     stream.writeEndDocument(); // fin du doc
 
      newfile.close();
 
@@ -165,6 +314,15 @@ void DossierManager::ajouterDossier(const QString& i, const QString& n, const QS
         modification=true;
     }
 }
+/*
+void DossierManager::ajouterDossier(Dossier& dos){
+    if (trouverDossier(dos->getId())) {
+        throw UTProfilerException(QString("erreur, DossierManager, Dossier ")+dos->getId()+QString("déja existant"));
+    }else{
+        addItem(dos);
+        modification=true;
+    }
+}*/
 
 Dossier* DossierManager::trouverDossier(const QString& c)const{
     //QMessageBox::warning(NULL, "Chargement Dossier","Coucou");
@@ -198,3 +356,5 @@ DossierManager& DossierManager::getInstance(){
 void DossierManager::libererInstance(){
     if (handler.instance) { delete handler.instance; handler.instance=0; }
 }
+
+
