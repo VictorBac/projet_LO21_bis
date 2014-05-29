@@ -5,10 +5,6 @@
 #include"UVEditeur.h"
 
 
-//Modif Victor
-
-//Totooooooooooooooo
-//azrfqsdaz
 class Cursus {
 protected :
     QString title;
@@ -53,10 +49,10 @@ protected :
 
 };
 
-class CursusManager{
+class CursusManager: public Manager<Cursus>{
 private:
-    Cursus** Curs;
-    unsigned int nbCursus;
+    //Cursus** Curs;
+    //unsigned int nbCursus;
     unsigned int nbMaxCursus;
     void addItem(Cursus* cur);
     bool modification;
@@ -64,7 +60,7 @@ private:
     CursusManager& operator=(const CursusManager& cm);
     CursusManager();
     ~CursusManager();
-    QString file;
+    //QString file;
     friend struct Handler;
     struct Handler{
         CursusManager* instance;
@@ -84,7 +80,8 @@ public:
     static void libererInstance();
     void AjouterCursus(Cursus*);
     Cursus& getCursus(QString&);
-    class Iterator {
+
+    /*class Iterator {
         friend class CursusManager;
         Cursus** currentCur;
         unsigned int nbRemain;
@@ -120,6 +117,7 @@ public:
     };
     iterator begin() { return iterator(Curs); }
     iterator end() { return iterator(Curs+nbCursus); }
+*/
 };
 
 #endif // CURSUS_H

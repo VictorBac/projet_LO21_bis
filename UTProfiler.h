@@ -79,10 +79,64 @@ public:
 
 QTextStream& operator<<(QTextStream& f, const UV& uv);
 
-class UVManager {
+template<typename T>
+class Manager {
+protected :
+    T** tab;
+    unsigned int Nb;
+    QString file;
+    friend struct Handler;
+    struct Handler{
+        Manager* instance;
+        Handler():instance(0){}
+        ~Handler(){ if (instance) delete instance; instance=0; }
+    };
+    static Handler handler;
+
+public:
+    Manager();
+    virtual ~Manager();
+    class Iterator {
+        friend class Manager;
+        T** current;
+        unsigned int nbRemain;
+        Iterator(T** u, unsigned nb):current(u),nbRemain(nb){}
+    public:
+        Iterator():nbRemain(0),current(0){}
+        bool isDone() const { return nbRemain==0; }
+        void next() {
+            if (isDone())
+                throw UTProfilerException("error, next on an iterator which is done");
+            nbRemain--;
+            current++;
+        }
+        T& currents() const {
+            if (isDone())
+                throw UTProfilerException("error, indirection on an iterator which is done");
+            return **current;
+        }
+    };
+    Iterator getIterator() {
+        return Iterator(tab,Nb);
+    }
+
+    class iterator {
+        T** current;
+        iterator(UV** u):current(u){}
+        friend class Manager;
+    public:
+        iterator():current(0){};
+        T& operator*() const { return **current; }
+        bool operator!=(iterator it) const { return current!=it.current; }
+        iterator& operator++(){ ++current; return *this; }
+    };
+    iterator begin() { return iterator(tab); }
+    iterator end() { return iterator(tab+Nb); }
+
+};
+
+class UVManager : public Manager<UV> {
 private:
-    UV** uvs;
-    unsigned int nbUV;
     unsigned int nbMaxUV;
     void addItem(UV* uv);
     bool modification;
@@ -112,73 +166,7 @@ public:
     void ajouterUV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p);
     const UV& getUV(const QString& code) const;
     UV& getUV(const QString& code);
-	class Iterator {
-		friend class UVManager;
-		UV** currentUV;
-		unsigned int nbRemain;
-		Iterator(UV** u, unsigned nb):currentUV(u),nbRemain(nb){}
-    public:
-        Iterator():nbRemain(0),currentUV(0){}
-        bool isDone() const { return nbRemain==0; }
-        void next() {
-            if (isDone())
-                throw UTProfilerException("error, next on an iterator which is done");
-            nbRemain--;
-            currentUV++;
-        }
-        UV& current() const {
-            if (isDone())
-                throw UTProfilerException("error, indirection on an iterator which is done");
-            return **currentUV;
-        }
-    };
-    Iterator getIterator() {
-        return Iterator(uvs,nbUV);
-    }
-
-    class iterator {
-        UV** current;
-        iterator(UV** u):current(u){}
-        friend class UVManager;
-    public:
-        iterator():current(0){};
-        UV& operator*() const { return **current; }
-        bool operator!=(iterator it) const { return current!=it.current; }
-        iterator& operator++(){ ++current; return *this; }
-    };
-    iterator begin() { return iterator(uvs); }
-    iterator end() { return iterator(uvs+nbUV); }
-
-    class FilterIterator {
-		friend class UVManager;
-		UV** currentUV;
-		unsigned int nbRemain;
-		Categorie categorie;
-		FilterIterator(UV** u, unsigned nb, Categorie c):currentUV(u),nbRemain(nb),categorie(c){
-			while(nbRemain>0 && (*currentUV)->getCategorie()!=categorie){
-				nbRemain--; currentUV++;
-			}
-		}
-	public:
-		FilterIterator():nbRemain(0),currentUV(0){}
-		bool isDone() const { return nbRemain==0; }
-		void next() { 
-			if (isDone()) 
-				throw UTProfilerException("error, next on an iterator which is done"); 
-			do {
-				nbRemain--; currentUV++;
-			}while(nbRemain>0 && (*currentUV)->getCategorie()!=categorie);
-		}
-		UV& current() const { 
-			if (isDone()) 
-				throw UTProfilerException("error, indirection on an iterator which is done"); 
-			return **currentUV; 
-		}
-	};
-	FilterIterator getFilterIterator(Categorie c) { 
-		return FilterIterator(uvs,nbUV,c); 
-	}
-};
+   };
 
 
 class Inscription {

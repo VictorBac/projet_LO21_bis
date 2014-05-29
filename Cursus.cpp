@@ -12,15 +12,19 @@ void Cursus::retirerUV(unsigned int x){
     nbUv--;
 }
 
-CursusManager::CursusManager():Curs(0),nbCursus(0),nbMaxCursus(0),file(""),modification(false){
+
+template<class T>
+Manager<T>::Manager():tab(0),Nb(0),file(""){};
+
+CursusManager::CursusManager():Manager(),nbMaxCursus(0),modification(false){
 }
 
 int CursusManager::existCursus(QString cod){
     unsigned int i=0;
-    while((i<nbCursus)&&(Curs[i]->getTitle()!=cod)){
+    while((i<this->Nb)&&(this->tab[i]->getTitle()!=cod)){
           i++;
      }
-    if (i==nbCursus)
+    if (i==this->Nb)
         return 0;
     else
         return 1;
@@ -28,23 +32,23 @@ int CursusManager::existCursus(QString cod){
 
 void CursusManager::SupprCursus(QString cod){
     unsigned int x=0;
-    while(CursusManager::getInstance().Curs[x]->getTitle()!=cod)
+    while(CursusManager::getInstance().tab[x]->getTitle()!=cod)
     {x++;}
-        for(unsigned int j=x; j<nbCursus-1;j++){
-            Curs[j]=Curs[j+1];}
-        nbCursus--;
+        for(unsigned int j=x; j<this->Nb-1;j++){
+            this->tab[j]=this->tab[j+1];}
+        this->Nb--;
 };
 
 void CursusManager::AjouterCursus(Cursus* cur){
-    if (nbCursus==nbMaxCursus){
+    if (this->Nb==nbMaxCursus){
         Cursus** newtab=new Cursus*[nbMaxCursus+10];
-        for(unsigned int i=0; i<nbCursus; i++) newtab[i]=Curs[i];
+        for(unsigned int i=0; i<this->Nb; i++) newtab[i]=this->tab[i];
         nbMaxCursus+=10;
-        Cursus** old=Curs;
-        Curs=newtab;
+        Cursus** old=this->tab;
+        this->tab=newtab;
         delete[] old;
     }
-    Curs[nbCursus++]=cur;
+    this->tab[this->Nb++]=cur;
 }
 
 Cursus& CursusManager::creatCursus(){
@@ -67,15 +71,15 @@ void CursusManager::saveC(const QString& f){
      stream.setAutoFormatting(true);
      stream.writeStartDocument();
      stream.writeStartElement("Cursus");
-     for(unsigned int i=0; i<nbCursus; i++){
+     for(unsigned int i=0; i<this->Nb; i++){
          stream.writeStartElement("Cur");
-         stream.writeTextElement("titre",Curs[i]->getTitle());
-         stream.writeTextElement("CreditCS",QString::number(Curs[i]->getCreditCS()));
-         stream.writeTextElement("CreditTM",QString::number(Curs[i]->getCreditTM()));
-         stream.writeTextElement("CreditTSH",QString::number(Curs[i]->getCreditTSH()));
-         stream.writeTextElement("CreditLibre",QString::number(Curs[i]->getCreditCL()));
-         for(unsigned int j=0; j<Curs[i]->getNbUV(); j++){
-             stream.writeTextElement("Cuv",Curs[i]->getUV(j)->getCode());
+         stream.writeTextElement("titre",this->tab[i]->getTitle());
+         stream.writeTextElement("CreditCS",QString::number(this->tab[i]->getCreditCS()));
+         stream.writeTextElement("CreditTM",QString::number(this->tab[i]->getCreditTM()));
+         stream.writeTextElement("CreditTSH",QString::number(this->tab[i]->getCreditTSH()));
+         stream.writeTextElement("CreditLibre",QString::number(this->tab[i]->getCreditCL()));
+         for(unsigned int j=0; j<this->tab[i]->getNbUV(); j++){
+             stream.writeTextElement("Cuv",this->tab[i]->getUV(j)->getCode());
          }
          stream.writeEndElement();
      }
@@ -167,15 +171,18 @@ void CursusManager::load(const QString& f){
     xml.clear();
 }
 
+template<class T>
+Manager<T>::~Manager(){};
+
 CursusManager::~CursusManager(){
     if (file!="") saveC(file);
-    for(unsigned int i=0; i<nbCursus; i++) delete Curs[i];
-    delete[] Curs;
+    for(unsigned int i=0; i<this->Nb; i++) delete this->tab[i];
+    delete[] this->tab;
 }
 
 Cursus* CursusManager::trouverCursus( QString& c){
-    for(unsigned int i=0; i<nbCursus; i++)
-        if (c==Curs[i]->getTitle()) return Curs[i];
+    for(unsigned int i=0; i<this->Nb; i++)
+        if (c==this->tab[i]->getTitle()) return this->tab[i];
     return 0;
 }
 

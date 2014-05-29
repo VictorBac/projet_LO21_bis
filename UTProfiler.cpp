@@ -53,7 +53,10 @@ QTextStream& operator<<(QTextStream& f, const Categorie& cat){
     return f<<CategorieToString(cat);
 }
 
-UVManager::UVManager():uvs(0),nbUV(0),nbMaxUV(0),file(""),modification(false){
+template<class T>
+Manager<T>::Manager():tab(0),Nb(0),file(""){};
+
+UVManager::UVManager():Manager(),nbMaxUV(0),modification(false){
 }
 UV& UVManager::creatUV(){
     try{
@@ -69,11 +72,11 @@ UV& UVManager::creatUV(){
 
 void UVManager::SupprUV(QString cod){
     unsigned int x=0;
-    while(UVManager::getInstance().uvs[x]->getCode()!=cod)
+    while(UVManager::getInstance().tab[x]->getCode()!=cod)
     {x++;}
-        for(unsigned int j=x; j<nbUV-1;j++){
-            uvs[j]=uvs[j+1];}
-        nbUV--;
+        for(unsigned int j=x; j<this->Nb-1;j++){
+            this->tab[j]=this->tab[j+1];}
+        this->Nb--;
 };
 
 int UVManager::existUV(const QString& code) const{
@@ -182,41 +185,43 @@ void UVManager::save(const QString& f){
      stream.setAutoFormatting(true);
      stream.writeStartDocument();
      stream.writeStartElement("uvs");
-     for(unsigned int i=0; i<nbUV; i++){
+     for(unsigned int i=0; i<this->Nb; i++){
          stream.writeStartElement("uv");
-         stream.writeAttribute("automne", (uvs[i]->ouvertureAutomne())?"true":"false");
-         stream.writeAttribute("printemps", (uvs[i]->ouverturePrintemps())?"true":"false");
-         stream.writeTextElement("code",uvs[i]->getCode());
-         stream.writeTextElement("titre",uvs[i]->getTitre());
-         QString cr; cr.setNum(uvs[i]->getNbCredits());
+         stream.writeAttribute("automne", (this->tab[i]->ouvertureAutomne())?"true":"false");
+         stream.writeAttribute("printemps", (this->tab[i]->ouverturePrintemps())?"true":"false");
+         stream.writeTextElement("code",this->tab[i]->getCode());
+         stream.writeTextElement("titre",this->tab[i]->getTitre());
+         QString cr; cr.setNum(this->tab[i]->getNbCredits());
          stream.writeTextElement("credits",cr);
-         stream.writeTextElement("categorie",CategorieToString(uvs[i]->getCategorie()));
+         stream.writeTextElement("categorie",CategorieToString(this->tab[i]->getCategorie()));
          stream.writeEndElement();
      }
      stream.writeEndElement();
      stream.writeEndDocument();
 
      newfile.close();
-
 }
+
+template<class T>
+Manager<T>::~Manager(){};
 
 UVManager::~UVManager(){
     CursusManager::libererInstance();
     if (file!="") save(file);
-	for(unsigned int i=0; i<nbUV; i++) delete uvs[i];
-	delete[] uvs;
+    for(unsigned int i=0; i<this->Nb; i++) delete this->tab[i];
+    delete[] this->tab;
 }
 
 void UVManager::addItem(UV* uv){
-	if (nbUV==nbMaxUV){
+    if (this->Nb==nbMaxUV){
 		UV** newtab=new UV*[nbMaxUV+10];
-		for(unsigned int i=0; i<nbUV; i++) newtab[i]=uvs[i];
+        for(unsigned int i=0; i<this->Nb; i++) newtab[i]=this->tab[i];
 		nbMaxUV+=10;
-		UV** old=uvs;
-		uvs=newtab;
+        UV** old=this->tab;
+        this->tab=newtab;
 		delete[] old;
 	}
-	uvs[nbUV++]=uv;
+    this->tab[this->Nb++]=uv;
 }
 
 void UVManager::ajouterUV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p){
@@ -230,8 +235,8 @@ void UVManager::ajouterUV(const QString& c, const QString& t, unsigned int nbc, 
 }
 
 UV* UVManager::trouverUV(const QString& c)const{
-	for(unsigned int i=0; i<nbUV; i++)
-		if (c==uvs[i]->getCode()) return uvs[i];
+    for(unsigned int i=0; i<this->Nb; i++)
+        if (c==this->tab[i]->getCode()) return this->tab[i];
 	return 0;
 }
 

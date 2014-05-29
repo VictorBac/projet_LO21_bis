@@ -17,7 +17,7 @@ Profiler::Profiler(QWidget *parent):QMainWindow(parent){
     QMenu* mCharger=mFichier->addMenu("&Charger");
     QMenu* mEdition = menuBar()->addMenu("&Edition");
     QMenu* mAjout=menuBar()->addMenu("&Ajout");
-    QMenu* mSuppr=menuBar()->addMenu("&Suppression");
+    QMenu* mSuppr=menuBar()->addMenu("&Suppressions");
 
     QAction *actionChargerUV=mCharger->addAction("Catalogue UVs");
     QAction *actionChargerCursus=mCharger->addAction("Catalogue Cursus");
