@@ -22,29 +22,67 @@
 class DossierCreateur : public QWidget{
     Q_OBJECT
 
-    Dossier& doss;
-    QComboBox * List;
+    Dossier& dossier;
+
+
     QLineEdit* id;
+    QLabel* idLabel;
+    QLineEdit* nom;
+    QLabel* nomLabel;
+    QLineEdit* prenom;
+    QLabel* prenomLabel;
+
+    QLineEdit* cursus;
+    QLabel* cursusLabel;
+
+    QComboBox * List; // Pour les inscriptions
+    QLabel* inscriptionLabel;
+    QLineEdit* code;
+    QLabel* codeLabel;
+    QLineEdit* res;
+    QLabel* resLabel;
+    QLineEdit* saison;
+    QLabel* saisonLabel;
+    QLineEdit* annee;
+    QLabel* anneeLabel;
+
+    QComboBox * List2; // Pour les modifications d'inscriptions
+    QLabel* modificationLabel;
+    QLineEdit* code2;
+    QLabel* code2Label;
+    QLineEdit* res2;
+    QLabel* res2Label;
+    QLineEdit* saison2;
+    QLabel* saison2Label;
+    QLineEdit* annee2;
+    QLabel* annee2Label;
+
+
+
+    QPushButton* ajouter;
+    QPushButton* enlever;
+    QPushButton* ajouterInscription;
+    QPushButton* enleverInscription;
+
     QLineEdit* AjouterUneInscription;
     QLineEdit* EnleverUneInscription;
 
-    QLabel* idLabel;
-    QLabel* inscriptionLabel;
-    QLabel* NbCreditsToGet;
-    QLabel* CSLabel;
-    QLabel* TMLabel;
-    QLabel* CLLabel;
-    QLabel* TSHLabel;
+
+    QPushButton* sauver;
     QPushButton* annuler;
-    QPushButton* sauverD;
-    QPushButton* ajouter;
-    QPushButton* enlever;
     QVBoxLayout* couche;
     QHBoxLayout* coucheH1;
     QHBoxLayout* coucheH2;
     QHBoxLayout* coucheH3;
     QHBoxLayout* coucheH4;
     QHBoxLayout* coucheH5;
+    QHBoxLayout* coucheH6;
+
+    QHBoxLayout* coucheH7;
+    QHBoxLayout* coucheH8;
+    QHBoxLayout* coucheH9;
+    QHBoxLayout* coucheH10;
+    QHBoxLayout* coucheH11;
 
 public:
     explicit DossierCreateur(Dossier& DossierToEdit, QWidget *parent = 0);
@@ -55,9 +93,10 @@ public slots:
     void sauverDossier();
     void AjouterInscription();
     void EnleverInscription();
+    void ModifList2();
 
 private slots:
-    void activerSauverD();
+    void activerSauver();
 
 };
 

@@ -18,7 +18,7 @@ DossierManager::DossierManager():dossiers(0),nbDossier(0),nbMaxDossier(0),file("
 
 Dossier& DossierManager::creatDossier(){
     try{
-        Dossier* newDossier = new Dossier(QString(nbDossier+1)," "," ", " ");
+        Dossier* newDossier = new Dossier("","","","");
         addItem(newDossier);
         modification = true;
         return *newDossier;

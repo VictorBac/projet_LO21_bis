@@ -6,7 +6,10 @@
 
 void DossierCreateur::sauverDossier(){
     if(DossierManager::getInstance().existDossier(id->text())==0){
-    doss.setId(id->text());
+    dossier.setId(id->text());
+    dossier.setNom(nom->text());
+    dossier.setPrenom(prenom->text());
+    dossier.setCursus(cursus->text());
 
     QMessageBox::information(this, "Sauvegarde", "Dossier sauvegardé...");
     }
@@ -16,116 +19,183 @@ void DossierCreateur::sauverDossier(){
 }
 
 void DossierCreateur::AjouterInscription(){
-   if(UVManager::getInstance().existUV(AjouterUneInscription->text())!=1)
-   QMessageBox::information(this, "Sauvegarde", "Cette Inscription n'existe pas.");
-   else{
-   unsigned int i=0;
-   while((i<doss.getNbInscription())&&(doss.getInscription(i)->getUV()!=AjouterUneInscription->text())){
-         i++;
-    }
-    if (i==doss.getNbInscription()){
-        UV* uvATrouver = UVManager::getInstance().trouverUV(AjouterUneInscription->text());
-        QString uvTrouve = uvATrouver->getCode();
-        Saison sa(Printemps);
-        Semestre sem(sa,2014);
+    Inscription* newIns = new Inscription;
+    Semestre s(StringToSaison(saison->text()),annee->text().toInt());
+    newIns->setSemestre(s);
+    newIns->setCode(code->text());
+    newIns->setResultat(StringToNote(res->text()));
+    dossier.AjouterInscription(newIns);
+    QMessageBox::information(this, "Sauvegarde", "L'inscription a bien été sauvegardée.");
+    code->setText("");
+    annee->setText("");
+    saison->setText("");
+    res->setText("");
+    List->addItem(newIns->getUV());
+    List2->addItem(newIns->getUV());
+}
 
-        Inscription I(uvTrouve, sem, EC);
-
-        doss.AjouterInscription(&I);
-        QMessageBox::information(this, "Sauvegarde", "Inscription Ajoutée");
-    }
-    else
-        QMessageBox::information(this, "Sauvegarde", "Cette Inscription existe déjà !");
-    AjouterUneInscription->clear();
-     }
+void DossierCreateur::ModifList2(){
+    code2->setText(dossier.getInscription(List2->currentIndex())->getUV());
+    annee2->setText(QString::number((dossier.getInscription(List2->currentIndex())->getSemestre().getAnnee())));
+    saison2->setText(SaisonToString(dossier.getInscription(List2->currentIndex())->getSemestre().getSaison()));
+    res2->setText(NoteToString(dossier.getInscription(List2->currentIndex())->getResultat()));
 }
 
 void DossierCreateur::EnleverInscription(){
-    unsigned int i=0;
-    while((i<doss.getNbInscription())&&(doss.getInscription(i)->getUV()!=EnleverUneInscription->text())){
-          i++;
-     }
-     if (i==doss.getNbInscription())
-         QMessageBox::information(this, "Sauvegarde", "Inscription Inexistante dans le Dossier");
 
-     else{
-         doss.retirerInscription(i);
-         QMessageBox::information(this, "Sauvegarde", "Inscription Supprimée");
-     }
-  EnleverUneInscription->clear();
-  }
+}
 
 
-void DossierCreateur::activerSauverD(){
-    sauverD->setEnabled(true);
+
+void DossierCreateur::activerSauver(){
+    sauver->setEnabled(true);
 }
 
 DossierCreateur::DossierCreateur(Dossier& DossierToEdit, QWidget *parent) :
-    QWidget(parent),doss(DossierToEdit){
-    this->setWindowTitle(QString("Edition du Dossier ")+doss.getId());
-
+    QWidget(parent),dossier(DossierToEdit){
+    this->setWindowTitle(QString("Edition du Dossier ")+dossier.getId());
     // creation des labels
+    //************
+    inscriptionLabel = new QLabel("Inscription",this);
 
     idLabel = new QLabel("id",this);
+    nomLabel = new QLabel("Nom",this);
+    prenomLabel = new QLabel("Prenom",this);
+    cursusLabel = new QLabel("Cursus",this);
+    codeLabel = new QLabel("Code UV",this);
+    resLabel = new QLabel("Resultat",this);
+    saisonLabel = new QLabel("Saison",this);
+    anneeLabel = new QLabel("Annee",this);
+
+//*** Pour les mdoification d'inscription :
+    modificationLabel = new QLabel("Modification");
+    code2Label = new QLabel("Code UV",this);
+    res2Label = new QLabel("Resultat", this);
+    saison2Label = new QLabel("Saison",this);
+    annee2Label = new QLabel("Annee",this);
+    List2 = new QComboBox(this); // Pour les modifications d'inscriptions
+    code2 = new QLineEdit("",this);
+    res2 = new QLineEdit("",this);
+    saison2 = new QLineEdit("",this);
+    annee2 = new QLineEdit("",this);
+
+
+
+//    AjouterUneInscription= new QLineEdit;
+//    EnleverUneInscription= new QLineEdit; /// A régler
 
     // création des composants éditables
-
-    id = new QLineEdit(doss.getId(),this);
+    id = new QLineEdit(dossier.getId(),this);
+    nom = new QLineEdit(dossier.getNom(),this);
+    prenom = new QLineEdit(dossier.getPrenom(),this);
+    cursus = new QLineEdit(dossier.getCursus(),this);
+    code = new QLineEdit("",this);
+    res = new QLineEdit("",this);
+    saison = new QLineEdit("",this);
+    annee = new QLineEdit("",this);
+    //**************
     List = new QComboBox(this);
-    AjouterUneInscription= new QLineEdit;
-    EnleverUneInscription= new QLineEdit;
 
-    //Création des boutons
+    QObject::connect(List2,SIGNAL(currentIndexChanged(int)),this,SLOT(ModifList2()));
 
-    sauverD= new QPushButton("Sauver", this);
-    QObject::connect(sauverD,SIGNAL(clicked()),this,SLOT(sauverDossier()));
-    sauverD->setEnabled(false);
+
+    // Création des buttons.
+    ajouterInscription= new QPushButton("Ajouter", this);
+    QObject::connect(ajouterInscription,SIGNAL(clicked()),this,SLOT(AjouterInscription())) ;
+
+    enleverInscription= new QPushButton("Enlever", this);
+    QObject::connect(enleverInscription,SIGNAL(clicked()),this,SLOT(EnleverInscription()));
+
+    sauver= new QPushButton("Sauver", this);
+    QObject::connect(sauver,SIGNAL(clicked()),this,SLOT(sauverDossier()));
+    sauver->setEnabled(false);
 
     annuler= new QPushButton("Annuler", this);
     QObject::connect(annuler,SIGNAL(clicked()),this,SLOT(close()));
 
-    ajouter= new QPushButton("Ajouter", this);
-    QObject::connect(ajouter,SIGNAL(clicked()),this,SLOT(AjouterInscription())) ;
+    // Ajout de la liste des inscriptions.
+    for(unsigned int i=0;i<dossier.getNbInscription();i++){
+        try{
+        List->addItem(dossier.getInscription(i)->getUV());
+        }catch(UTProfilerException& e){
+            throw UTProfilerException("erreur inscription ", __FILE__,__LINE__);
+        }
+    }
 
-    enlever= new QPushButton("Enlever", this);
-    QObject::connect(enlever,SIGNAL(clicked()),this,SLOT(EnleverInscription()));
-
-
-    // Ajout de la liste des Inscription.
-   /* for(unsigned int i=0;i<doss.getNbInscription();i++){
-        List->addItem(doss.getInscription(i)->getCode());
-    }*/
     // connections******************************
+    QObject::connect(id,SIGNAL(textEdited(QString)),this,SLOT(activerSauver()));
+    QObject::connect(nom,SIGNAL(textEdited(QString)),this,SLOT(activerSauver()));
+    QObject::connect(prenom,SIGNAL(textEdited(QString)),this,SLOT(activerSauver()));
+    QObject::connect(cursus,SIGNAL(textEdited(QString)),this,SLOT(activerSauver()));
 
-    QObject::connect(id,SIGNAL(textEdited(QString)),this,SLOT(activerSauverD()));
-    QObject::connect(ajouter,SIGNAL(clicked()),this,SLOT(activerSauverD()));
-    QObject::connect(enlever,SIGNAL(clicked()),this,SLOT(activerSauverD()));
 
-    //disposition des couches
+
+    // diposition des couches
     coucheH1 = new QHBoxLayout;
-    coucheH2 = new QHBoxLayout;
-    coucheH3 = new QHBoxLayout;
-    coucheH4 = new QHBoxLayout;
-    coucheH5 = new QHBoxLayout;
-
-
     coucheH1->addWidget(idLabel);
     coucheH1->addWidget(id);
-    coucheH2->addWidget(inscriptionLabel);
-    coucheH2->addWidget(List);
-    coucheH3->addWidget(AjouterUneInscription);
-    coucheH3->addWidget(ajouter);
-    coucheH4->addWidget(EnleverUneInscription);
-    coucheH4->addWidget(enlever);
-    coucheH5->addWidget(annuler);
-    coucheH5->addWidget(sauverD);
 
+    coucheH2 = new QHBoxLayout;
+    coucheH2->addWidget(nomLabel);
+    coucheH2->addWidget(nom);
+
+    coucheH3 = new QHBoxLayout;
+    coucheH3->addWidget(prenomLabel);
+    coucheH3->addWidget(prenom);
+
+
+    coucheH4 = new QHBoxLayout;
+    coucheH4->addWidget(cursusLabel);
+    coucheH4->addWidget(cursus);
+
+    coucheH6 = new QHBoxLayout;
+    coucheH6->addWidget(inscriptionLabel);
+    coucheH6->addWidget(List);
+    coucheH6->addWidget(modificationLabel);
+    coucheH6->addWidget(List2);
+
+    //Gestion des Inscriptions
+    coucheH7 = new QHBoxLayout;
+    coucheH7->addWidget(codeLabel);
+    coucheH7->addWidget(code);
+    coucheH7->addWidget(code2Label);
+    coucheH7->addWidget(code2);
+    coucheH8 = new QHBoxLayout;
+    coucheH8->addWidget(resLabel);
+    coucheH8->addWidget(res);
+    coucheH8->addWidget(res2Label);
+    coucheH8->addWidget(res2);
+    coucheH9 = new QHBoxLayout;
+    coucheH9->addWidget(saisonLabel);
+    coucheH9->addWidget(saison);
+    coucheH9->addWidget(saison2Label);
+    coucheH9->addWidget(saison2);
+    coucheH10 = new QHBoxLayout;
+    coucheH10->addWidget(anneeLabel);
+    coucheH10->addWidget(annee);
+    coucheH10->addWidget(annee2Label);
+    coucheH10->addWidget(annee2);
+
+    coucheH11 = new QHBoxLayout;
+    coucheH11->addWidget(ajouterInscription);
+    coucheH11->addWidget(enleverInscription);
+
+
+
+    coucheH5 = new QHBoxLayout;
+    coucheH5->addWidget(sauver);
+    coucheH5->addWidget(annuler);
     couche = new QVBoxLayout;
     couche->addLayout(coucheH1);
     couche->addLayout(coucheH2);
     couche->addLayout(coucheH3);
     couche->addLayout(coucheH4);
+    couche->addLayout(coucheH6);
+    couche->addLayout(coucheH7);
+    couche->addLayout(coucheH8);
+    couche->addLayout(coucheH9);
+    couche->addLayout(coucheH10);
+    couche->addLayout(coucheH11);
     couche->addLayout(coucheH5);
-
     setLayout(couche);
 };

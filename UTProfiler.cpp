@@ -36,7 +36,7 @@ Note StringToNote(const QString& str){
     if(str=="D") return D;
     if(str=="E") return E;
     if(str=="F") return F;
-    if(str=="FX") return B;
+    if(str=="FX") return FX;
     if(str=="EC") return EC;
     if(str=="RES") return RES;
     if(str=="ABS") return ABS;
