@@ -10,7 +10,7 @@ class Inscription {
 public:
     Inscription(const QString code="", const Semestre& s=Semestre(Printemps,2010), Note res=EC):codeUV(code),semestre(s),resultat(res){}
     const QString& getUV() const { return codeUV; }
-    Semestre getSemestre() const { return semestre; }
+    Semestre& getSemestre() { return semestre; }
     Note getResultat() const { return resultat; }
     void setResultat(Note newres) { resultat=newres; }
     void setSemestre(Semestre s){ semestre=s;}

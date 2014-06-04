@@ -52,7 +52,7 @@ QString NoteToString(Note n){
     case D: return "D";
     case E: return "E";
     case F: return "F";
-    case FX: return "FC";
+    case FX: return "FX";
     case RES: return "RES";
     case ABS: return "ABS";
     case EC: return "EC";
@@ -63,6 +63,10 @@ QString NoteToString(Note n){
 
 Saison StringToSaison(const QString& s){
     if(s=="Printemps") return Printemps;
+    else
+    if(s=="P") return Printemps;
+    else
+    if(s=="A") return Automne;
     else
     if(s=="Automne") return Automne;
     else throw UTProfilerException(QString("erreur, StringToSaison, saison ")+s+" inexistante");

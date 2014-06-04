@@ -1,6 +1,7 @@
 
 #include"DossierCreateur.h"
 #include"Dossier.h"
+#include <QComboBox>
 
 
 
@@ -34,6 +35,13 @@ void DossierCreateur::AjouterInscription(){
     List2->addItem(newIns->getUV());
 }
 
+void DossierCreateur::AnnulerInscription(){
+    code->setText("");
+    annee->setText("");
+    saison->setText("");
+    res->setText("");
+}
+
 void DossierCreateur::ModifList2(){
     code2->setText(dossier.getInscription(List2->currentIndex())->getUV());
     annee2->setText(QString::number((dossier.getInscription(List2->currentIndex())->getSemestre().getAnnee())));
@@ -41,15 +49,48 @@ void DossierCreateur::ModifList2(){
     res2->setText(NoteToString(dossier.getInscription(List2->currentIndex())->getResultat()));
 }
 
-void DossierCreateur::EnleverInscription(){
+void DossierCreateur::EnleverInscription(){       
+    dossier.retirerInscription(List2->currentIndex());
+    QObject::disconnect(List2,SIGNAL(currentIndexChanged(int)),this,SLOT(ModifList2()));
+    List2->clear();
+    List->clear();
+    for(unsigned int i=0;i<dossier.getNbInscription();i++){
+        try{
+        List->addItem(dossier.getInscription(i)->getUV());
+        List2->addItem(dossier.getInscription(i)->getUV());
+        }catch(UTProfilerException& e){
+            throw UTProfilerException("erreur inscription ", __FILE__,__LINE__);
+        }
+    }
+    QObject::connect(List2,SIGNAL(currentIndexChanged(int)),this,SLOT(ModifList2()));
+    if(dossier.getNbInscription()>0){
+        code2->setText(dossier.getInscription(List2->currentIndex())->getUV());
+        annee2->setText(QString::number((dossier.getInscription(List2->currentIndex())->getSemestre().getAnnee())));
+        saison2->setText(SaisonToString(dossier.getInscription(List2->currentIndex())->getSemestre().getSaison()));
+        res2->setText(NoteToString(dossier.getInscription(List2->currentIndex())->getResultat()));
+    }else{
+        code2->setText("");
+        annee2->setText("");
+        saison2->setText("");
+        res2->setText("");
+    }
 
+        //List->removeItem(List2->currentIndex());
+    //List2->removeItem(List2->currentIndex());
 }
 
-
+void DossierCreateur::ModifierInscription(){
+    unsigned int numIns = List2->currentIndex();
+    dossier.getInscription(numIns)->setCode(code2->text());
+    dossier.getInscription(numIns)->setResultat(StringToNote(res2->text()));
+    dossier.getInscription(numIns)->getSemestre().setSaison(StringToSaison(saison2->text()));
+    dossier.getInscription(numIns)->getSemestre().setAnnee(annee2->text().toInt());
+}
 
 void DossierCreateur::activerSauver(){
     sauver->setEnabled(true);
 }
+
 
 DossierCreateur::DossierCreateur(Dossier& DossierToEdit, QWidget *parent) :
     QWidget(parent),dossier(DossierToEdit){
@@ -75,6 +116,7 @@ DossierCreateur::DossierCreateur(Dossier& DossierToEdit, QWidget *parent) :
     annee2Label = new QLabel("Annee",this);
     List2 = new QComboBox(this); // Pour les modifications d'inscriptions
     code2 = new QLineEdit("",this);
+    code2->setReadOnly(true);
     res2 = new QLineEdit("",this);
     saison2 = new QLineEdit("",this);
     annee2 = new QLineEdit("",this);
@@ -103,8 +145,15 @@ DossierCreateur::DossierCreateur(Dossier& DossierToEdit, QWidget *parent) :
     ajouterInscription= new QPushButton("Ajouter", this);
     QObject::connect(ajouterInscription,SIGNAL(clicked()),this,SLOT(AjouterInscription())) ;
 
+    annulerInscription= new QPushButton("Annuler", this);
+    QObject::connect(annulerInscription,SIGNAL(clicked()),this,SLOT(AnnulerInscription()));
+
+    modifierInscription= new QPushButton("Modifier", this);
+    QObject::connect(modifierInscription,SIGNAL(clicked()),this,SLOT(ModifierInscription()));
+
     enleverInscription= new QPushButton("Enlever", this);
     QObject::connect(enleverInscription,SIGNAL(clicked()),this,SLOT(EnleverInscription()));
+
 
     sauver= new QPushButton("Sauver", this);
     QObject::connect(sauver,SIGNAL(clicked()),this,SLOT(sauverDossier()));
@@ -113,14 +162,7 @@ DossierCreateur::DossierCreateur(Dossier& DossierToEdit, QWidget *parent) :
     annuler= new QPushButton("Annuler", this);
     QObject::connect(annuler,SIGNAL(clicked()),this,SLOT(close()));
 
-    // Ajout de la liste des inscriptions.
-    for(unsigned int i=0;i<dossier.getNbInscription();i++){
-        try{
-        List->addItem(dossier.getInscription(i)->getUV());
-        }catch(UTProfilerException& e){
-            throw UTProfilerException("erreur inscription ", __FILE__,__LINE__);
-        }
-    }
+
 
     // connections******************************
     QObject::connect(id,SIGNAL(textEdited(QString)),this,SLOT(activerSauver()));
@@ -178,6 +220,8 @@ DossierCreateur::DossierCreateur(Dossier& DossierToEdit, QWidget *parent) :
 
     coucheH11 = new QHBoxLayout;
     coucheH11->addWidget(ajouterInscription);
+    coucheH11->addWidget(annulerInscription);
+    coucheH11->addWidget(modifierInscription);
     coucheH11->addWidget(enleverInscription);
 
 

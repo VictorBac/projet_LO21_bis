@@ -50,6 +50,7 @@ class DossierCreateur : public QWidget{
     QLabel* modificationLabel;
     QLineEdit* code2;
     QLabel* code2Label;
+  //  QLabel* code3Label;
     QLineEdit* res2;
     QLabel* res2Label;
     QLineEdit* saison2;
@@ -62,10 +63,12 @@ class DossierCreateur : public QWidget{
     QPushButton* ajouter;
     QPushButton* enlever;
     QPushButton* ajouterInscription;
+    QPushButton* annulerInscription;
     QPushButton* enleverInscription;
+    QPushButton* modifierInscription;
 
-    QLineEdit* AjouterUneInscription;
-    QLineEdit* EnleverUneInscription;
+    //QLineEdit* AjouterUneInscription;
+    //QLineEdit* EnleverUneInscription;
 
 
     QPushButton* sauver;
@@ -94,10 +97,11 @@ public slots:
     void AjouterInscription();
     void EnleverInscription();
     void ModifList2();
+    void AnnulerInscription();
+    void ModifierInscription();
 
 private slots:
     void activerSauver();
-
 };
 
 
