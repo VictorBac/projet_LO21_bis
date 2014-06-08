@@ -3,7 +3,6 @@
 
 #include "Dossier.h"
 #include "DossierEditeur.h"
-#include <QObject>
 #include <QWidget>
 #include <QCheckBox>
 #include <QLineEdit>
@@ -15,7 +14,7 @@
 #include <QComboBox>
 #include <QLabel>
 #include <QPushButton>
-#include "UTProfiler.h"
+#include <QMessageBox>
 
 
 
@@ -23,8 +22,6 @@ class DossierEditeur : public QWidget{
     Q_OBJECT
 
     Dossier& dossier;
-    QComboBox * List; // Pour les inscriptions
-
     QLineEdit* id;
     QLabel* idLabel;
     QLineEdit* nom;
@@ -35,17 +32,42 @@ class DossierEditeur : public QWidget{
     QLineEdit* cursus;
     QLabel* cursusLabel;
 
+    QComboBox * List; // Pour les inscriptions
     QLabel* inscriptionLabel;
+    QLineEdit* code;
+    QLabel* codeLabel;
+    QLineEdit* res;
+    QLabel* resLabel;
+    QLineEdit* saison;
+    QLabel* saisonLabel;
+    QLineEdit* annee;
+    QLabel* anneeLabel;
 
-    /*QTextEdit* titre;
-    QLabel* titreLabel;
-    QSpinBox* credits;
-    QLabel* creditsLabel;
-    QComboBox* categorie;
-    QLabel* categorieLabel;
-    QLabel* ouvertureLabel;
-    QCheckBox* automne;
-    QCheckBox* printemps;*/
+    QComboBox * List2; // Pour les modifications d'inscriptions
+    QLabel* modificationLabel;
+    QLineEdit* code2;
+    QLabel* code2Label;
+  //  QLabel* code3Label;
+    QLineEdit* res2;
+    QLabel* res2Label;
+    QLineEdit* saison2;
+    QLabel* saison2Label;
+    QLineEdit* annee2;
+    QLabel* annee2Label;
+
+
+
+    QPushButton* ajouter;
+    QPushButton* enlever;
+    QPushButton* ajouterInscription;
+    QPushButton* annulerInscription;
+    QPushButton* enleverInscription;
+    QPushButton* modifierInscription;
+
+    //QLineEdit* AjouterUneInscription;
+    //QLineEdit* EnleverUneInscription;
+
+
     QPushButton* sauver;
     QPushButton* annuler;
     QVBoxLayout* couche;
@@ -56,6 +78,12 @@ class DossierEditeur : public QWidget{
     QHBoxLayout* coucheH5;
     QHBoxLayout* coucheH6;
 
+    QHBoxLayout* coucheH7;
+    QHBoxLayout* coucheH8;
+    QHBoxLayout* coucheH9;
+    QHBoxLayout* coucheH10;
+    QHBoxLayout* coucheH11;
+
 public:
     explicit DossierEditeur(Dossier& dossierToEdit, QWidget *parent = 0);
 
@@ -63,9 +91,14 @@ signals:
 
 public slots:
     void sauverDossier();
+    void AjouterInscription();
+    void EnleverInscription();
+    void ModifList2();
+    void AnnulerInscription();
+    void ModifierInscription();
 
 private slots:
-    void activerSauver(QString str="");
+    void activerSauver();
 };
 
 

@@ -88,7 +88,7 @@ private:
     static Handler handler;
 
 public:
-
+    unsigned int getNbDossier()const{return nbDossier;}
     Dossier* trouverDossier(const QString& id) const;
     Dossier& creatDossier();
     int existDossier(const QString& id) const;

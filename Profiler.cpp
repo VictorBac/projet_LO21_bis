@@ -14,7 +14,7 @@
 #include <QMessageBox>
 
 Profiler::Profiler(QWidget *parent):QMainWindow(parent){
-    setMinimumSize(300,300);
+    setMinimumSize(450,350);
     setWindowTitle("UT-Profiler");
     QMenu* mFichier = menuBar()->addMenu("&Fichier");
     QMenu* mCharger=mFichier->addMenu("&Charger");

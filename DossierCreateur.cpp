@@ -94,7 +94,7 @@ void DossierCreateur::activerSauver(){
 
 DossierCreateur::DossierCreateur(Dossier& DossierToEdit, QWidget *parent) :
     QWidget(parent),dossier(DossierToEdit){
-    this->setWindowTitle(QString("Edition du Dossier ")+dossier.getId());
+    this->setWindowTitle(QString("Creation du Dossier ")+dossier.getId());
     // creation des labels
     //************
     inscriptionLabel = new QLabel("Inscription",this);
@@ -127,7 +127,9 @@ DossierCreateur::DossierCreateur(Dossier& DossierToEdit, QWidget *parent) :
 //    EnleverUneInscription= new QLineEdit; /// A régler
 
     // création des composants éditables
-    id = new QLineEdit(dossier.getId(),this);
+    int nb_id = DossierManager::getInstance().getNbDossier();
+    id = new QLineEdit(QString::number(nb_id),this);
+    id->setReadOnly(true); // L'id est généré automatiquement, on ne peut pas le modifier.
     nom = new QLineEdit(dossier.getNom(),this);
     prenom = new QLineEdit(dossier.getPrenom(),this);
     cursus = new QLineEdit(dossier.getCursus(),this);
