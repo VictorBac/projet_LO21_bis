@@ -11,7 +11,6 @@ void DossierEditeur::sauverDossier(){
     dossier.setPrenom(prenom->text());
     dossier.setCursus(cursus->text());
 
-
     QMessageBox::information(this, "Sauvegarde", "Dossier sauvegardée...");
 }
 
@@ -74,9 +73,6 @@ void DossierEditeur::EnleverInscription(){
         saison2->setText("");
         res2->setText("");
     }
-
-        //List->removeItem(List2->currentIndex());
-    //List2->removeItem(List2->currentIndex());
 }
 
 void DossierEditeur::ModifierInscription(){
@@ -90,9 +86,6 @@ void DossierEditeur::ModifierInscription(){
 DossierEditeur::DossierEditeur(Dossier& DossierToEdit, QWidget *parent) :
         QWidget(parent),dossier(DossierToEdit){
     this->setWindowTitle(QString("Edition du Dossier ")+dossier.getId());
-
-
-
 
     // creation des labels
     //************
@@ -121,13 +114,9 @@ DossierEditeur::DossierEditeur(Dossier& DossierToEdit, QWidget *parent) :
     annee2 = new QLineEdit("",this);
 
 
-
-//    AjouterUneInscription= new QLineEdit;
-//    EnleverUneInscription= new QLineEdit; /// A régler
-
     // création des composants éditables
-    int nb_id = DossierManager::getInstance().getNbDossier();
-    id = new QLineEdit(QString::number(nb_id),this);
+
+    id = new QLineEdit(dossier.getId(),this);
     id->setReadOnly(true); // L'id est généré automatiquement, on ne peut pas le modifier.
     nom = new QLineEdit(dossier.getNom(),this);
     prenom = new QLineEdit(dossier.getPrenom(),this);
