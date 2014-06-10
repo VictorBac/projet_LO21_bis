@@ -20,6 +20,9 @@ void DossierCreateur::sauverDossier(){
 }
 
 void DossierCreateur::AjouterInscription(){
+    if(UVManager::getInstance().existUV(code->text())!=1)
+        QMessageBox::information(this, "Sauvegarde", "Cette UV n'existe pas.");
+    else{
     Inscription* newIns = new Inscription;
     Semestre s(StringToSaison(saison->text()),annee->text().toInt());
     newIns->setSemestre(s);
@@ -33,6 +36,7 @@ void DossierCreateur::AjouterInscription(){
     res->setText("");
     List->addItem(newIns->getUV());
     List2->addItem(newIns->getUV());
+    }
 }
 
 void DossierCreateur::AnnulerInscription(){
