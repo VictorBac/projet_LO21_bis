@@ -26,7 +26,7 @@ void DossierEditeur::AjouterInscription(){
     newIns->setResultat(StringToNote(res->text()));
     dossier.AjouterInscription(newIns);
     QMessageBox::information(this, "Sauvegarde", "L'inscription a bien été sauvegardée.");
-    unsigned int nbManquant = dossier.compareAvecCursus()
+    unsigned int nbManquant = dossier.compareAvecCursus();
 
     //unsigned int nbCredit = dossier.getCredits(CS);
     //QMessageBox::information(this, "Sauvegarde", "Nbr de crédit CS")+QString::number(nbCredit);

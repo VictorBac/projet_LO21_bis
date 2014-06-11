@@ -60,7 +60,7 @@ unsigned int Dossier::compareAvecCursus(){
     if(getCursus() != ""){
         QString cur = getCursus();
         QString& cur2 = cur;
-        unsigned int nb= CursusManager::getCursus(cur2).getCreditCS();// - getCredits(CS);
+        unsigned int nb= CursusManager::getInstance().getCursus(cur2).getCreditCS();// - getCredits(CS);
         QMessageBox::warning(NULL, "Chargement Dossier",QString::number(nb));
         return nb;
     }
