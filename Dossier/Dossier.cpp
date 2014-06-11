@@ -211,7 +211,8 @@ void DossierManager::load(const QString& f){
                             while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "ins")) {
                                 if(xml.tokenType() == QXmlStreamReader::StartElement) {
                                     if(xml.name() == "code") {
-                                      xml.readNext();insc->setCode(xml.text().toString());
+                                      xml.readNext();
+                                      insc->setCode(xml.text().toString());
                                     }
                                     if(xml.name() == "res") {
                                         xml.readNext();insc->setResultat(StringToNote(xml.text().toString()));

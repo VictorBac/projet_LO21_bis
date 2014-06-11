@@ -12,6 +12,7 @@
 #include <QFileDialog>
 #include <QString>
 #include <QMessageBox>
+#include "MineurEditeur.h"
 
 Profiler::Profiler(QWidget *parent):QMainWindow(parent){
     setMinimumSize(300,300);
@@ -25,11 +26,16 @@ Profiler::Profiler(QWidget *parent):QMainWindow(parent){
     QAction *actionChargerUV=mCharger->addAction("Catalogue UVs");
     QAction *actionChargerCursus=mCharger->addAction("Catalogue Cursus");
     QAction *actionChargerDossier=mCharger->addAction("Catalogue Dossiers");
+    QMenu* mCursusEd=mEdition->addMenu("&Cursus");
+
+    QAction *actionNouveauFiliere=mCursusEd->addAction("Filiere");
+    QAction *actionNouveauProfilCommun=mCursusEd->addAction("ProfilCommun");
+    QAction *actionNouveauMineur=mCursusEd->addAction("Mineur");
+
     mFichier->addSeparator();
 
     QAction *actionQuitter = mFichier->addAction("&Quitter");
     QAction* actionUV=mEdition->addAction("&UV");
-    QAction* actionCursus=mEdition->addAction("&Cursus");
     QAction* actionDossier=mEdition->addAction("&Dossier");
     QAction* actionUV2=mAjout->addAction("&UV");
 
@@ -46,7 +52,6 @@ Profiler::Profiler(QWidget *parent):QMainWindow(parent){
     connect(actionChargerDossier, SIGNAL(triggered()),this,SLOT(openChargerDossier()));
     connect(actionQuitter, SIGNAL(triggered()), qApp, SLOT(quit()));
     connect(actionUV, SIGNAL(triggered()),this,SLOT(openUV()));
-    connect(actionCursus, SIGNAL(triggered()),this,SLOT(openCursus()));
     connect(actionDossier, SIGNAL(triggered()),this,SLOT(openDossier()));
     connect(actionUV2, SIGNAL(triggered()),this, SLOT(nouvelleUV()));
     connect(actionCursus2, SIGNAL(triggered()),this,SLOT(NouveauCursus()));
@@ -54,6 +59,9 @@ Profiler::Profiler(QWidget *parent):QMainWindow(parent){
     connect(actionUV3, SIGNAL(triggered()),this, SLOT(SupprUV()));
     connect(actionCursus3, SIGNAL(triggered()),this,SLOT(SupprCursus()));
     connect(actionDossier3, SIGNAL(triggered()),this,SLOT(SupprDossier()));
+    connect(actionNouveauMineur, SIGNAL(triggered()),this,SLOT(openMineur()));
+    connect(actionNouveauFiliere, SIGNAL(triggered()),this,SLOT(openFiliere()));
+    connect(actionNouveauProfilCommun, SIGNAL(triggered()),this,SLOT(openProfilCommun()));
 }
 
 void Profiler::openChargerDossier(){
@@ -87,7 +95,7 @@ void Profiler::openChargerCursus(){
     }
 }
 
-void Profiler::openCursus(){
+void Profiler::openFiliere(){
     QString code=QInputDialog::getText(this,"Entrez le code du Cursus à éditer","Cursus");
     if (code!="")
     try {
@@ -96,6 +104,18 @@ void Profiler::openCursus(){
         setCentralWidget(fenetre);
     }catch(UTProfilerException& e){
         QMessageBox::warning(this, "Edition Cursus", QString("Erreur : le Cursus ")+code+" n’existe pas.");
+    }
+}
+
+void Profiler::openMineur(){
+    QString code=QInputDialog::getText(this,"Entrez le code du Mineur à éditer","Mineur");
+    if (code!="")
+    try {
+        Mineur& cur=dynamic_cast<Mineur&>(CursusManager::getInstance().getCursus(code));
+        MineurEditeur* fenetre=new MineurEditeur(cur,this);
+        setCentralWidget(fenetre);
+    }catch(UTProfilerException& e){
+        QMessageBox::warning(this, "Edition Mineur", QString("Erreur : le Mineur ")+code+" n’existe pas.");
     }
 }
 
@@ -121,13 +141,13 @@ void Profiler::nouvelleUV(){
     }
 }
 
-void Profiler::NouveauCursus(){
+void Profiler::NouveauCursus(QString type){
     try {
-        Cursus& cur=CursusManager::getInstance().creatCursus();
+        Cursus& cur=CursusManager::getInstance().creatCursus(type);
         CursusCreateur* fenetre=new CursusCreateur(cur,this);
         setCentralWidget(fenetre);
     }catch(UTProfilerException& e){
-        QMessageBox::warning(this, "Ajout UV", QString("Impossible de créer une UV"));
+        QMessageBox::warning(this, "Ajout Cursus", QString("Impossible de créer un Cursus"));
     }
 }
 

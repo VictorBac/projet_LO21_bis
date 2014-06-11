@@ -39,6 +39,11 @@ enum Note { A, B, C, D, E, F, FX, RES, ABS, /* en cours */ EC  };
 enum Saison { Automne, Printemps };
 inline QTextStream& operator<<(QTextStream& f, const Saison& s) { if (s==Automne) f<<"A"; else f<<"P"; return f;}
 
+Note StringToNote(const QString& str);
+QString NoteToString(Note n);
+Saison StringToSaison(const QString& s);
+QString SaisonToString(Saison s);
+
 class Semestre {
 	Saison saison;
 	unsigned int annee;
@@ -46,6 +51,8 @@ public:
 	Semestre(Saison s, unsigned int a):saison(s),annee(a){ if (annee<1972||annee>2099) throw UTProfilerException("annee non valide"); }
 	Saison getSaison() const { return saison; }
 	unsigned int getAnnee() const { return annee; }
+    void setSaison (Saison s){ saison = s;}
+    void setAnnee (unsigned int a){ annee = a;}
 };
 
 inline QTextStream& operator<<(QTextStream& f, const Semestre& s) { return f<<s.getSaison()<<s.getAnnee()%100; }
@@ -168,21 +175,6 @@ public:
     UV& getUV(const QString& code);
    };
 
-
-class Inscription {
-	const UV* uv;
-	Semestre semestre;
-	Note resultat;
-public:
-    Inscription(const UV& u, const Semestre& s, Note res=EC):uv(&u),semestre(s),resultat(res){}
-	const UV& getUV() const { return *uv; }
-	Semestre getSemestre() const { return semestre; }
-	Note getResultat() const { return resultat; }
-	void setResultat(Note newres) { resultat=newres; }
-};
-
-class Dossier {
-};
 
 class Formation{
 };

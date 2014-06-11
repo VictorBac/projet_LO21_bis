@@ -20,10 +20,11 @@ public slots:
     void openChargerCursus();
     void openCursus();
     void nouvelleUV();
-    void NouveauCursus();
+    void NouveauCursus(QString);
     void SupprUV();
     void SupprCursus();
-
+    void openFiliere();
+    void openMineur();
     void openChargerDossier();
     void openDossier();
     void nouveauDossier();

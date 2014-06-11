@@ -21,6 +21,8 @@ class CursusEditeur : public QWidget{
     Q_OBJECT
     
     Cursus& CurCur;
+    QComboBox * Obligatoire;
+    QComboBox * SousCurs;
     QComboBox * List;
     QLineEdit* titre;
     QLineEdit* AjouterUneUV;
@@ -29,6 +31,7 @@ class CursusEditeur : public QWidget{
     QLineEdit* CreditTM;
     QLineEdit* CreditTSH;
     QLineEdit* CreditLibre;
+    QLabel * ObligLabel;
     QLabel* titreLabel;
     QLabel* uvLabel;
     QLabel* NbCreditsToGet;
@@ -51,6 +54,10 @@ class CursusEditeur : public QWidget{
     QHBoxLayout* coucheH8;
     QHBoxLayout* coucheH9;
     QHBoxLayout* coucheH10;
+    QHBoxLayout* coucheH11;
+    QHBoxLayout* coucheH12;
+    QHBoxLayout* coucheH13;
+
 
 
 public:
@@ -62,6 +69,8 @@ public slots:
     void sauverCursus();
     void AjouterlUV();
     void EnleverlUV();
+    void AjouterlUVObl();
+    void EnleverlUVObl();
 
 private slots:
     void activerSauverC();

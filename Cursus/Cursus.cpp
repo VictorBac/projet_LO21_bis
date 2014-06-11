@@ -51,12 +51,26 @@ void CursusManager::AjouterCursus(Cursus* cur){
     this->tab[this->Nb++]=cur;
 }
 
-Cursus& CursusManager::creatCursus(){
+Cursus& CursusManager::creatCursus(QString c){
     try{
-        Cursus* newcur = new Cursus("");
-        AjouterCursus(newcur);
-        modification = true;
-        return *newcur;
+        if (c=="Filiere"){
+            Filiere* newcur = new Filiere("");
+            AjouterCursus(newcur);
+            modification = true;
+            return *newcur;
+        }
+        if (c=="Mineur"){
+            Mineur* newcur = new Mineur("");
+            AjouterCursus(newcur);
+            modification = true;
+            return *newcur;
+        }
+        if (c=="ProfilCommun"){
+            ProfilCommun* newcur = new ProfilCommun("");
+            AjouterCursus(newcur);
+            modification = true;
+            return *newcur;
+        }
     }
     catch(UTProfilerException& e){
         throw UTProfilerException("erreur", __FILE__,__LINE__);
@@ -109,23 +123,23 @@ void CursusManager::load(const QString& f){
             // If it's named Cursus, we'll go to the next.
             if(xml.name() == "Cursus") continue;
             // If it's named cur, we'll dig the information from there.
-            if(xml.name() == "Cur") {
+            if(xml.name() == "Filiere") {
                 QString titre;
                 unsigned int NBCS;
                 unsigned int NBTM;
                 unsigned int NBTSH;
                 unsigned int NBCL;
                 UV* currUv;
-                Cursus* Cur;
+                Filiere* Cur;
                 xml.readNext();
                 //We'll continue the loop until we hit an EndElement named Cur.
-                while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "Cur")) {
+                while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "Filiere")) {
                     if(xml.tokenType() == QXmlStreamReader::StartElement) {
                         // We've found titre.
                         if(xml.name() == "titre") {
                             xml.readNext();
                             titre=xml.text().toString();
-                            Cur = new Cursus(titre);
+                            Cur = new Filiere(titre);
                         }
                         if(xml.name() == "CreditCS") {
                             xml.readNext();
@@ -158,6 +172,124 @@ void CursusManager::load(const QString& f){
                     // ...and next...
                     xml.readNext();
                 }
+
+                AjouterCursus(Cur);
+            }
+            if(xml.name() == "Mineur") {
+                QString titre;
+                unsigned int NBCS;
+                unsigned int NBTM;
+                unsigned int NBTSH;
+                unsigned int NBCL;
+                UV* currUv;
+                Mineur* Cur;
+                xml.readNext();
+                //We'll continue the loop until we hit an EndElement named Cur.
+                while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "Cur")) {
+                    if(xml.tokenType() == QXmlStreamReader::StartElement) {
+                        // We've found titre.
+                        if(xml.name() == "titre") {
+                            xml.readNext();
+                            titre=xml.text().toString();
+                            Cur = new Mineur(titre);
+                        }
+                        if(xml.name() == "CreditCS") {
+                            xml.readNext();
+                            NBCS=xml.text().toString().toUInt();
+                            Cur->setCreditCS(NBCS);
+                        }
+                        if(xml.name() == "CreditTM") {
+                            xml.readNext();
+                            NBTM=xml.text().toString().toUInt();
+                            Cur->setCreditTM(NBTM);
+                        }
+                        if(xml.name() == "CreditTSH") {
+                            xml.readNext();
+                            NBTSH=xml.text().toString().toUInt();
+                            Cur->setCreditTSH(NBTSH);
+                        }
+                        if(xml.name() == "CreditLibre") {
+                            xml.readNext();
+                            NBCL=xml.text().toString().toUInt();
+                            Cur->setCreditLibre(NBCL);
+                        }
+                        // We've found List of uv.
+                        if(xml.name() == "Cuv") {
+                            xml.readNext();
+                            QString texte=xml.text().toString();
+                            currUv=UVManager::getInstance().trouverUV(texte);
+                            Cur->AjouterUv(currUv);
+                        }
+                        if(xml.name() == "obligatoire") {
+                            xml.readNext();
+                            QString texte=xml.text().toString();
+                            currUv=UVManager::getInstance().trouverUV(texte);
+                            Cur->AjouterUvObl(currUv);
+                        }
+                    }
+                    // ...and next...
+                    xml.readNext();
+                }
+
+                AjouterCursus(Cur);
+            }
+            if(xml.name() == "ProfilCommun") {
+                QString titre;
+                unsigned int NBCS;
+                unsigned int NBTM;
+                unsigned int NBTSH;
+                unsigned int NBCL;
+                UV* currUv;
+                Cursus* newCur;
+                ProfilCommun* Cur;
+                xml.readNext();
+                //We'll continue the loop until we hit an EndElement named Cur.
+                while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "Cur")) {
+                    if(xml.tokenType() == QXmlStreamReader::StartElement) {
+                        // We've found titre.
+                        if(xml.name() == "titre") {
+                            xml.readNext();
+                            titre=xml.text().toString();
+                            Cur = new ProfilCommun(titre);
+                        }
+                        if(xml.name() == "CreditCS") {
+                            xml.readNext();
+                            NBCS=xml.text().toString().toUInt();
+                            Cur->setCreditCS(NBCS);
+                        }
+                        if(xml.name() == "CreditTM") {
+                            xml.readNext();
+                            NBTM=xml.text().toString().toUInt();
+                            Cur->setCreditTM(NBTM);
+                        }
+                        if(xml.name() == "CreditTSH") {
+                            xml.readNext();
+                            NBTSH=xml.text().toString().toUInt();
+                            Cur->setCreditTSH(NBTSH);
+                        }
+                        if(xml.name() == "CreditLibre") {
+                            xml.readNext();
+                            NBCL=xml.text().toString().toUInt();
+                            Cur->setCreditLibre(NBCL);
+                        }
+                        // We've found List of uv.
+                        if(xml.name() == "Cuv") {
+                            xml.readNext();
+                            QString texte=xml.text().toString();
+                            currUv=UVManager::getInstance().trouverUV(texte);
+                            Cur->AjouterUv(currUv);
+                        }
+                        if(xml.name() == "SousCur") {
+                            xml.readNext();
+                            QString texte=xml.text().toString();
+                            newCur=CursusManager::getInstance().trouverCursus(texte);
+                            Cur->AjouterCur(newCur);
+                        }
+                    }
+                    // ...and next...
+                    xml.readNext();
+                }
+
                 AjouterCursus(Cur);
             }
         }

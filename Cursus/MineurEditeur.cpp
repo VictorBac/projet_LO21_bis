@@ -1,11 +1,10 @@
 #include "Cursus.h"
-#include "CursusEditeur.h"
+#include "MineurEditeur.h"
 #include "UTProfiler.h"
 #include <QMessageBox>
 
 
-
-void CursusEditeur::sauverCursus(){
+void MineurEditeur::sauverCursus(){
     CurCur.setTitre(titre->text());
     CurCur.setCreditCS(CreditCS->text().toInt());
     CurCur.setCreditTM(CreditTM->text().toInt());
@@ -14,7 +13,7 @@ void CursusEditeur::sauverCursus(){
     QMessageBox::information(this, "Sauvegarde", "Cursus sauvegardé...");
 }
 
-void CursusEditeur::AjouterlUV(){
+void MineurEditeur::AjouterlUV(){
     if(UVManager::getInstance().existUV(AjouterUneUV->text())!=1)
    QMessageBox::information(this, "Sauvegarde", "Cette UV n'existe pas.");
    else{
@@ -32,8 +31,26 @@ void CursusEditeur::AjouterlUV(){
      }
 }
 
+void MineurEditeur::AjouterlUVObl(){
+    if(UVManager::getInstance().existUV(AjouterUneUVObl->text())!=1)
+   QMessageBox::information(this, "Sauvegarde", "Cette UV n'existe pas.");
+   else{
+   unsigned int i=0;
+   while((i<CurCur.getNbUVObl())&&(CurCur.getUVObl(i)->getCode()!=AjouterUneUVObl->text())){
+         i++;
+    }
+    if (i==CurCur.getNbUVObl()){
+        CurCur.AjouterUvObl(UVManager::getInstance().trouverUV(AjouterUneUVObl->text()));
+        QMessageBox::information(this, "Sauvegarde", "UV Ajoutée");
+    }
+    else
+        QMessageBox::information(this, "Sauvegarde", "Cette UV existe déjà !");
+    ajouterObl->clear();
+     }
+}
 
-void CursusEditeur::EnleverlUV(){
+
+void MineurEditeur::EnleverlUV(){
     unsigned int i=0;
     while((i<CurCur.getNbUV())&&(CurCur.getUV(i)->getCode()!=EnleverUneUV->text())){
           i++;
@@ -48,19 +65,34 @@ void CursusEditeur::EnleverlUV(){
   EnleverUneUV->clear();
   }
 
+void MineurEditeur::EnleverlUVObl(){
+    unsigned int i=0;
+    while((i<CurCur.getNbUVObl())&&(CurCur.getUVObl(i)->getCode()!=EnleverUneUVObl->text())){
+          i++;
+     }
+     if (i==CurCur.getNbUVObl())
+         QMessageBox::information(this, "Sauvegarde", "UV Inexistante dans le Cursus");
 
-void CursusEditeur::activerSauverC(){
+     else{
+         CurCur.enleverUvObl(i);
+         QMessageBox::information(this, "Sauvegarde", "UV Supprimée");
+     }
+  enleverObl->clear();
+  }
+
+
+void MineurEditeur::activerSauverC(){
     sauverC->setEnabled(true);
 }
 
-CursusEditeur::CursusEditeur(Cursus& CursusToEdit, QWidget *parent) :
-    QWidget(parent),CurCur(CursusToEdit){
-    this->setWindowTitle(QString("Edition du Cursus ")+CurCur.getTitle());
+MineurEditeur::MineurEditeur(Mineur& MineurToEdit, QWidget *parent) :
+    QWidget(parent),CurCur(MineurToEdit){
+    this->setWindowTitle(QString("Edition du Mineur ")+CurCur.getTitle());
 
     // creation des labels
 
     titreLabel = new QLabel("titre",this);
-    uvLabel = new QLabel("Uvs",this);
+    ObligLabel= new QLabel("Obligatoires",this);
     NbCreditsToGet= new QLabel("Crédits à Obtenir pour valider :",this);
     CSLabel = new QLabel("CS :",this);
     TMLabel= new QLabel("TM:",this);
@@ -70,13 +102,17 @@ CursusEditeur::CursusEditeur(Cursus& CursusToEdit, QWidget *parent) :
     // création des composants éditables
 
     titre = new QLineEdit(CurCur.getTitle(),this);
+    uvLabel = new QLabel("Uvs",this);
     List = new QComboBox(this);
     AjouterUneUV= new QLineEdit;
     EnleverUneUV= new QLineEdit;
+    ajouterObl= new QLineEdit;
+    enleverObl= new QLineEdit;
     CreditCS=new QLineEdit(QString::number(CurCur.getCreditCS()),this);
     CreditTM=new QLineEdit(QString::number(CurCur.getCreditTM()),this);
     CreditTSH=new QLineEdit(QString::number(CurCur.getCreditTSH()),this);
     CreditLibre=new QLineEdit(QString::number(CurCur.getCreditCL()),this);
+    Obligatoire = new QComboBox(this);
 
     //Création des boutons
 
@@ -93,10 +129,19 @@ CursusEditeur::CursusEditeur(Cursus& CursusToEdit, QWidget *parent) :
     enlever= new QPushButton("Enlever", this);
     QObject::connect(enlever,SIGNAL(clicked()),this,SLOT(EnleverlUV()));
 
+    AjouterUneUVObl= new QPushButton("Ajouter", this);
+    QObject::connect(AjouterUneUVObl,SIGNAL(clicked()),this,SLOT(AjouterlUVObl())) ;
+
+    EnleverUneUVObl= new QPushButton("Enlever", this);
+    QObject::connect(EnleverUneUVObl,SIGNAL(clicked()),this,SLOT(EnleverlUVObl()));
 
     // Ajout de la liste des UV.
     for(unsigned int i=0;i<CurCur.getNbUV();i++){
         List->addItem(CurCur.getUV(i)->getCode());
+    }
+
+    for(unsigned int i=0;i<CurCur.getNbUVObl();i++){
+        Obligatoire->addItem(CurCur.getUVObl(i)->getCode());
     }
     // connections******************************
 
@@ -107,7 +152,8 @@ CursusEditeur::CursusEditeur(Cursus& CursusToEdit, QWidget *parent) :
     QObject::connect(CreditTM,SIGNAL(textEdited(QString)),this,SLOT(activerSauverC()));
     QObject::connect(CreditTSH,SIGNAL(textEdited(QString)),this,SLOT(activerSauverC()));
     QObject::connect(CreditLibre,SIGNAL(textEdited(QString)),this,SLOT(activerSauverC()));
-
+    QObject::connect(AjouterUneUVObl,SIGNAL(clicked()),this,SLOT(activerSauverC()));
+    QObject::connect(EnleverUneUVObl,SIGNAL(clicked()),this,SLOT(activerSauverC()));
 
     //disposition des couches
     coucheH1 = new QHBoxLayout;
@@ -120,6 +166,9 @@ CursusEditeur::CursusEditeur(Cursus& CursusToEdit, QWidget *parent) :
     coucheH8 = new QHBoxLayout;
     coucheH9 = new QHBoxLayout;
     coucheH10 = new QHBoxLayout;
+    coucheH11 = new QHBoxLayout;
+    coucheH12 = new QHBoxLayout;
+    coucheH13 = new QHBoxLayout;
     coucheH1->addWidget(titreLabel);
     coucheH1->addWidget(titre);
     coucheH2->addWidget(uvLabel);
@@ -139,6 +188,12 @@ CursusEditeur::CursusEditeur(Cursus& CursusToEdit, QWidget *parent) :
     coucheH9->addWidget(CreditTSH);
     coucheH10->addWidget(CLLabel);
     coucheH10->addWidget(CreditLibre);
+    coucheH11->addWidget(uvLabel);
+    coucheH11->addWidget(List);
+    coucheH12->addWidget(ajouterObl);
+    coucheH12->addWidget(AjouterUneUV);
+    coucheH13->addWidget(enleverObl);
+    coucheH13->addWidget(EnleverUneUV);
     couche = new QVBoxLayout;
     couche->addLayout(coucheH1);
     couche->addLayout(coucheH2);
@@ -149,7 +204,11 @@ CursusEditeur::CursusEditeur(Cursus& CursusToEdit, QWidget *parent) :
     couche->addLayout(coucheH8);
     couche->addLayout(coucheH9);
     couche->addLayout(coucheH10);
+    couche->addLayout(coucheH11);
+    couche->addLayout(coucheH12);
+    couche->addLayout(coucheH13);
     couche->addLayout(coucheH5);
 
     setLayout(couche);
 };
+

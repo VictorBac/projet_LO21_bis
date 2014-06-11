@@ -17,6 +17,7 @@ public:
     void setCode(const QString c){ codeUV=c;}
 };
 
+
 class Dossier {
 
 protected:
@@ -31,6 +32,7 @@ protected:
     Dossier(const QString& i, const QString& n, const QString& p, const QString& c, unsigned int nbIns=0,unsigned int nbIns2=0):
         id(i),nom(n),prenom(p),cursus(c),nbInscr(0),nbMaxInscr(nbIns2),inscr(0){}
     Dossier():id(" "),nom(""),prenom(" "),cursus(" "),nbInscr(0),nbMaxInscr(0),inscr(0){}
+
 
     friend class DossierManager;
 
