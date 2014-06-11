@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <QString>
 #include "UTProfiler.h"
+#include "Cursus.h"
 
 void Dossier::retirerInscription(unsigned int x){
     for(unsigned int j=x; j<nbInscr-1;j++){
@@ -38,110 +39,36 @@ int DossierManager::existDossier(const QString& id) const{
     }
 }
 
-//void DossierManager::load(const QString& f){
-//    if (file!=f) this->~DossierManager();
-//    file=f;
 
-//    QFile fin(file);
-//    // If we can't open it, let's show an error message.
-//    if (!fin.open(QIODevice::ReadOnly | QIODevice::Text)) {
-//        throw UTProfilerException("Erreur ouverture fichier Dossier");
-//    }
-//    // QXmlStreamReader takes any QIODevice.
-//    QXmlStreamReader reader(&fin);
-//    reader.readNext();
+//Création de la mini complétion :
 
-//    while (!reader.atEnd())
-//    {
-//        if (reader.isStartElement())
-//        {
-//            if (reader.name() == "dossiers")
-//            {
+unsigned int Dossier::getCredits(Categorie type){
+    unsigned int nbr = 0;
+    for(unsigned int i=0; i<this->getNbInscription();i++){
+        Categorie cate = UVManager::getInstance().getUV(getInscription(i)->getUV()).getCategorie();
+        if(cate == type){
+            QString res = NoteToString(getInscription(i)->getResultat());
+            if(res=="A" or res=="B" or res=="C" or res=="D" or res=="E"){
+                nbr += UVManager::getInstance().getUV(getInscription(i)->getUV()).getNbCredits();
+            }
+        }
+    }
+    return nbr;
+}
 
-//                reader.readNext(); // On va au prochain token
-//                // Tant que celui-ci n'est pas un élément de départ on avance au token suivant
-//                while(reader.isStartElement()==false)
-//                    reader.readNext();
+unsigned int Dossier::compareAvecCursus(){
+    if(getCursus() != ""){
+        QString cur = getCursus();
+        QString& cur2 = cur;
+        unsigned int nb= CursusManager::getCursus(cur2).getCreditCS();// - getCredits(CS);
+        QMessageBox::warning(NULL, "Chargement Dossier",QString::number(nb));
+        return nb;
+    }
+    else{
+        QMessageBox::warning(NULL, "Chargement Dossier","Il n'y a pas de cursus !");
+    }
+}
 
-//                if(reader.name() == "dossier")
-//                {
-//                    Dossier* dos = new Dossier;
-////                                        dos->setId("test");
-////                                        dos->setNom("test");
-////                                        dos->setPrenom("test");
-////                                        dos->setCursus("test");
-
-
-//                    reader.readNext();
-
-
-//                    while(!(reader.tokenType() == QXmlStreamReader::EndElement && reader.name() == "dossier")) {
-//                        if(reader.tokenType() == QXmlStreamReader::StartElement) {
-
-//                            if(reader.name() == "id") {
-//                                reader.readNext(); dos->setId(reader.text().toString());
-//                            }
-//                            // We've found nom.
-//                            if(reader.name() == "nom") {
-//                                reader.readNext(); dos->setNom(reader.text().toString());
-//                            }
-//                            // We've found prenom.
-//                            if(reader.name() == "prenom") {
-//                                reader.readNext(); dos->setPrenom(reader.text().toString());
-//                            }
-//                            if(reader.name() == "cursus") {
-//                               reader.readNext(); dos->setCursus(reader.text().toString());
-//                            }
-//                        }
-//                        reader.readNext();
-//                    }
-//                    addItem(dos);
-
-//                }//fin du dossier
-//            }else{
-//                /**********************************************/
-//                if(reader.name() == "dossier")
-//                {
-//                    Dossier* dos = new Dossier;
-////                                        dos->setId("test");
-////                                        dos->setNom("test");
-////                                        dos->setPrenom("test");
-////                                        dos->setCursus("test");
-
-
-//                    reader.readNext();
-
-
-//                    while(!(reader.tokenType() == QXmlStreamReader::EndElement && reader.name() == "dossier")) {
-//                        if(reader.tokenType() == QXmlStreamReader::StartElement) {
-
-//                            if(reader.name() == "id") {
-//                                reader.readNext(); dos->setId(reader.text().toString());
-//                            }
-//                            // We've found nom.
-//                            if(reader.name() == "nom") {
-//                                reader.readNext(); dos->setNom(reader.text().toString());
-//                            }
-//                            // We've found prenom.
-//                            if(reader.name() == "prenom") {
-//                                reader.readNext(); dos->setPrenom(reader.text().toString());
-//                            }
-//                            if(reader.name() == "cursus") {
-//                               reader.readNext(); dos->setCursus(reader.text().toString());
-//                            }
-//                        }
-//                        reader.readNext();
-//                    }
-//                    addItem(dos);
-
-//                }//fin du dossier
-//                /*******************************************************/
-//            }
-//        }
-//        reader.readNext(); // On va au prochain token
-//    }
-//    reader.clear();
-//}
 
 
 

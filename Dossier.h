@@ -49,6 +49,10 @@ public:
     void setPrenom(const QString& p) { prenom=p; }
     void setCursus(const QString& c) { cursus=c; }
 
+    unsigned int compareAvecCursus();
+    unsigned int getCredits(Categorie type);
+
+
     void retirerInscription(unsigned int x);
     void AjouterInscription(Inscription* I){
         if(nbMaxInscr==nbInscr){
@@ -62,6 +66,16 @@ public:
             }
         inscr[nbInscr++]=I;
     }
+
+    bool testUV(QString uv){
+        for (unsigned int i=0;i<getNbInscription();i++)
+            if ((getInscription(i)->getUV()==uv)&&(getInscription(i)->getResultat()!=F)
+                    &&(getInscription(i)->getResultat()!=FX)
+                    &&(getInscription(i)->getResultat()!=EC))
+            return false;
+    return true;
+    }
+
 
 };
 

@@ -53,7 +53,7 @@ void DossierCreateur::ModifList2(){
     res2->setText(NoteToString(dossier.getInscription(List2->currentIndex())->getResultat()));
 }
 
-void DossierCreateur::EnleverInscription(){       
+void DossierCreateur::EnleverInscription(){
     dossier.retirerInscription(List2->currentIndex());
     QObject::disconnect(List2,SIGNAL(currentIndexChanged(int)),this,SLOT(ModifList2()));
     List2->clear();
